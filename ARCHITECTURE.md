@@ -1,6 +1,7 @@
-# MORNIKAR PORTFOLIO — 架构与代码设计文档
+# MORNIKAR PORTFOLIO v4.0 — 架构与代码设计文档
 
 > 暗色科技感视差滚动个人作品集网站
+> 设计参考：明日方舟官网 + KPR 视差沉浸叙事
 > 部署目标：Vercel
 
 ---
@@ -10,8 +11,9 @@
 | 属性 | 说明 |
 |:-----|:-----|
 | **项目名称** | MORNIKAR Portfolio |
+| **版本** | v4.0 — 全面重构 |
 | **类型** | 静态单页网站 (SPA-like) |
-| **设计风格** | 暗色科幻终端风格，参考明日方舟官网 + KPR 视差滚动 |
+| **设计风格** | 暗色科幻终端，3层 Canvas 视差 + 三角/电路线条粒子 |
 | **部署平台** | Vercel |
 | **技术栈** | 纯原生 HTML5 / CSS3 / ES6+，零框架依赖 |
 
@@ -23,12 +25,13 @@
 MMO_mornikar_index/
 ├── index.html              # 主页面（单入口）
 ├── css/
-│   └── main.css            # 全局样式 + 组件样式 + 动画
+│   └── main.css            # 设计系统 + 全局样式 + 组件 + 动画 + 响应式
 ├── js/
-│   ├── parallax.js         # 视差背景系统（Canvas 2D）
-│   ├── particles.js        # 粒子系统 + 连线交互
-│   └── main.js             # 主交互逻辑（加载器、打字机、滚动动画等）
-├── assets/                 # 静态资源（图片等，当前由 Canvas 生成）
+│   ├── parallax.js         # 3层视差引擎（Canvas 2D 程序化生成）
+│   ├── particles.js        # 三角形 + 电路线条粒子覆盖层
+│   └── main.js             # 主交互（Loader/打字机/滚动/技能条/导航）
+├── assets/                 # 静态资源预留目录
+├── vercel.json             # Vercel 部署配置
 └── ARCHITECTURE.md         # 本文档
 ```
 
@@ -40,15 +43,18 @@ MMO_mornikar_index/
 
 | Token | 值 | 用途 |
 |:------|:---|:-----|
-| `--bg-primary` | `#0a0a0f` | 页面主背景 |
-| `--bg-secondary` | `#0d1117` | 卡片/终端背景 |
-| `--bg-tertiary` | `#111827` | 嵌套层级背景 |
-| `--text-primary` | `#e6e6e6` | 主文字 |
-| `--text-secondary` | `#9ca3af` | 次要文字 |
-| `--text-muted` | `#6b7280` | 弱化文字 |
-| `--accent-cyan` | `#00d4ff` | 强调色（荧光青）|
-| `--accent-red` | `#ff3333` | 警示/点缀色 |
-| `--border-color` | `rgba(255,255,255,0.06)` | 默认边框 |
+| `--c-bg` | `#060610` | 页面最深背景 |
+| `--c-bg2` | `#0b0b1a` | 卡片/终端背景 |
+| `--c-bg3` | `#10101f` | 嵌套层级背景 |
+| `--c-surface` | `rgba(11,11,26,.75)` | 半透明面板 |
+| `--c-text` | `#e4e4e8` | 主文字 |
+| `--c-dim` | `#8a8a9a` | 次要文字 |
+| `--c-muted` | `#55556a` | 弱化文字 |
+| `--c-cyan` | `#00d4ff` | 强调色（荧光青）|
+| `--c-cyan10` | `rgba(0,212,255,.08)` | 强调色低透明度 |
+| `--c-cyan30` | `rgba(0,212,255,.3)` | 强调色中透明度 |
+| `--c-red` | `#ff3344` | 警示/点缀色 |
+| `--c-border` | `rgba(255,255,255,.05)` | 默认边框 |
 
 ### 3.2 字体系统
 
@@ -58,53 +64,57 @@ MMO_mornikar_index/
 | 中文正文 | Noto Sans SC | Google Fonts |
 | 终端/代码 | JetBrains Mono | Google Fonts |
 
-### 3.3 间距系统
+### 3.3 设计原则
 
-8px 基准单位：`--space-xs: 0.5rem` → `--space-2xl: 8rem`
-
-### 3.4 圆角策略
-
-0-2px 锐利直角，保持工业/军事终端感。无大圆角卡片。
+- **圆角**：0-2px 锐利直角，工业/军事终端感
+- **间距**：8px 基准，大段落留白 80-120px
+- **动效**：视差滚动 + 打字机 + 扫描线 + 噪点纹理
 
 ---
 
 ## 4. 核心架构
 
-### 4.1 视差滚动系统 (`js/parallax.js`)
+### 4.1 视差滚动引擎 (`js/parallax.js`)
 
-三层 Canvas 背景，以不同速度响应滚动：
+三层独立 Canvas，各自程序化渲染不同深度的视觉元素：
 
-| 层级 | 类型 | 速度 | 内容 |
-|:-----|:-----|:-----|:-----|
-| Layer 1 | `grid` | 0.1x | 透视网格线 + 消散点 + 星星 + 六边形图案 |
-| Layer 2 | `shapes` | 0.3x | 线框立方体 + 三角形 + 电路线条 |
-| Layer 3 | `beams` | 0.6x | 对角光束 + 漂浮微粒 + 镜头光晕 |
+| 层级 | CSS Class | 速度 | 内容 |
+|:-----|:----------|:-----|:-----|
+| Layer 0 — Deep | `.p-layer--deep` | 0.045x | 透视网格 + 消散点 + 星星 + 六边形点阵 |
+| Layer 1 — Mid | `.p-layer--mid` | 0.15x | 线框三角形 + 填充三角 + 电路线条 + 六边形轮廓 |
+| Layer 2 — Front | `.p-layer--front` | 0.35x | 对角光束 + 漂浮尘埃 + 明亮火花粒子 |
 
 **实现要点：**
-- 使用 `requestAnimationFrame` + `scroll` 事件节流
-- 每层独立 Canvas，通过 `data-speed` 属性配置
-- 程序化生成，无需外部图片资源
-- 支持 `devicePixelRatio` 高清渲染
+- `requestAnimationFrame` 主循环，每帧重绘所有 Canvas
+- 滚动偏移量平滑插值（`scrollY += (target - current) * 0.08`）
+- 鼠标位置产生横向视差偏移，增强空间深度感
+- Canvas 尺寸 160% 视口，通过 `translate` 定位，避免边缘空白
+- 所有视觉元素 100% 程序化生成，零外部图片
 
-### 4.2 粒子系统 (`js/particles.js`)
+### 4.2 粒子覆盖层 (`js/particles.js`)
 
-- 60 个漂浮粒子，带透明度随机
-- 粒子间距离 < 120px 时绘制连线
-- 鼠标靠近时产生排斥力场
-- 标签页隐藏时自动暂停动画（性能优化）
+在视差背景之上、内容之下绘制三角形和电路线条粒子：
+
+| 元素 | 数量 | 特征 |
+|:-----|:-----|:-----|
+| 浮动三角形（线框） | 10 | 随机旋转、慢速漂移、85% 青色 / 15% 红色 |
+| 浮动三角形（填充） | 25 | 极低透明度填充、缓慢旋转 |
+| 电路线条 | 6 | 折线段 + 节点 + 动态数据包沿路径移动 |
+| 线路节点 | ~18 | 脉冲闪烁 |
+
+**交互：** 鼠标移动时所有元素轻微偏移（视差跟随）
 
 ### 4.3 主交互系统 (`js/main.js`)
 
 | 功能 | 实现方式 |
 |:-----|:---------|
-| 加载动画 | 模拟进度条 + 阶段文本切换 |
-| 打字机效果 | `setTimeout` 逐字输出 |
-| 滚动显现 | `IntersectionObserver` + CSS transition |
+| 全屏加载 | 模拟进度条 + 阶段文本 + 代码行淡入 |
+| 打字机 | `setTimeout` 逐字输出 + 随机延迟 |
+| 滚动显现 | `IntersectionObserver` + `.reveal` → `.vis` |
 | 数字计数器 | `requestAnimationFrame` + ease-out 缓动 |
-| 导航高亮 | 滚动位置计算 + 平滑滚动 |
-| 卡片视差 | 滚动偏移量 × `data-parallax` 系数 |
-| Glitch 效果 | 随机字符替换 + 逐字还原 |
-| 技能条动画 | IntersectionObserver 触发 width 过渡 |
+| 导航高亮 | 滚动位置计算 + `.show` 显示隐藏 |
+| 技能条 | `data-w` 属性 + CSS width 过渡动画 |
+| Glitch | 水印文字 CSS `steps()` 抖动 |
 
 ---
 
@@ -112,94 +122,74 @@ MMO_mornikar_index/
 
 ```
 body
-├── loader              # 全屏加载画面
-├── scanlines           # 扫描线覆盖层 (CSS repeating-linear-gradient)
-├── parallax-container  # 三层视差 Canvas 背景
-├── particles           # 粒子 Canvas
-├── nav                 # 固定导航栏 (blur backdrop)
-└── main
-    ├── section#hero           # 首页大字 + 统计 + CTA
-    ├── section#projects       # 项目网格 (2列 + 跨列卡片)
-    ├── section#design         # 设计作品展示
-    ├── section#open-source    # 开源项目卡片
-    ├── section#about          # 终端风格个人介绍
+├── #loader              # 全屏加载画面（进度条 + 代码日志）
+├── #parallax-scene      # 三层视差 Canvas
+│   ├── #layer-deep      # Layer 0: 网格 + 星星
+│   ├── #layer-mid       # Layer 1: 三角形 + 电路
+│   └── #layer-front     # Layer 2: 光束 + 粒子
+├── #fx-canvas           # 三角形 + 电路线条粒子覆盖层
+├── .noise-overlay       # SVG 噪点纹理（feTurbulence）
+├── .scanlines           # CRT 扫描线（CSS repeating-linear-gradient）
+├── nav#nav              # 固定导航栏（blur backdrop + 滚动显示）
+└── main.content
+    ├── section#hero           # 双栏 Hero（标题+统计+终端片段）
+    ├── section#projects       # 项目网格（2列+跨列卡片）
+    ├── section#open-source    # 开源项目卡片（3列）
+    ├── section#about          # 终端风格个人介绍 + 技能条
     └── footer                 # 页脚
 ```
 
 ---
 
-## 6. 响应式断点
+## 6. 保留的模块（v3→v4）
+
+| 模块 | 保留内容 |
+|:-----|:---------|
+| 三角形 + 电路线条 | 从 v3 的 project-icon 升级为独立粒子系统 |
+| 作品集卡片 | `.proj-card` 结构（卡片框、标签、技术栈、链接） |
+| 开源项目卡片 | `.oss-card` 结构（GitHub 图标、星标、语言标记） |
+| 字体样式 | Orbitron / Noto Sans SC / JetBrains Mono 三字体 |
+| 全屏加载画面 | 进度条 + 阶段状态 + 代码日志 |
+| 技能条动画 | `data-w` + CSS width 过渡 |
+| 终端风格介绍 | `.term` 窗口（标题栏、命令行、输出块） |
+
+---
+
+## 7. 响应式断点
 
 | 断点 | 调整 |
 |:-----|:-----|
-| ≤ 900px | 项目网格单列、导航链接隐藏、页脚垂直堆叠 |
-| ≤ 600px | 减小 padding、按钮全宽、字体缩小 |
+| ≤ 960px | Hero 单列、项目网格单列、导航链接隐藏、开源单列 |
+| ≤ 600px | 减小 padding、按钮全宽、统计卡片紧凑 |
 
 ---
 
-## 7. 性能优化
+## 8. 性能优化
 
-1. **Canvas 分层渲染**：三层背景独立 Canvas，避免重绘整个画面
-2. **粒子系统暂停**：`visibilitychange` 事件监听，标签页隐藏时停止动画
-3. **IntersectionObserver**：滚动动画仅在元素进入视口时触发
-4. **无外部图片**：所有视觉效果由 Canvas/CSS 程序化生成，零 HTTP 图片请求
-5. **CSS 硬件加速**：`transform` 和 `opacity` 优先使用 GPU 加速
+1. **Canvas 分层渲染**：3层背景 + 1层粒子 = 4 Canvas，独立绘制
+2. **平滑插值**：滚动/鼠标偏移量使用 lerp 平滑，避免抖动
+3. **IntersectionObserver**：滚动动画仅视口内触发
+4. **零外部图片**：所有视觉效果由 Canvas/CSS/SVG 程序化生成
+5. **GPU 加速**：`transform` + `opacity` 优先，`will-change` 声明
+6. **粒子精简**：总计 ~150 个元素，保持 60fps
 
 ---
 
-## 8. Vercel 部署
+## 9. Vercel 部署
 
-### 8.1 配置
-
-项目为纯静态网站，无需构建步骤。Vercel 自动识别 `index.html`。
-
-### 8.2 部署步骤
+纯静态网站，零构建步骤。Vercel 自动识别 `index.html`。
 
 ```bash
-# 1. 进入项目目录
-cd MMO_mornikar_index
-
-# 2. 初始化 Git（如未初始化）
-git init
-git add .
-git commit -m "init: portfolio site"
-
-# 3. 推送到 GitHub
-git remote add origin https://github.com/mornikar/mornikar-portfolio.git
-git push -u origin main
-
-# 4. Vercel 导入仓库自动部署
-# 或 vercel CLI: npx vercel --prod
+# 推送到 GitHub 后在 Vercel 导入即可
+# 或 CLI：npx vercel --prod
 ```
 
-### 8.3 可选：`vercel.json`
-
-```json
-{
-  "version": 2,
-  "name": "mornikar-portfolio",
-  "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
-  ]
-}
-```
-
----
-
-## 9. 扩展建议
-
-| 方向 | 方案 |
-|:-----|:-----|
-| 添加真实项目截图 | 替换 `project-bg` 渐变背景为 `<img>` |
-| 暗/亮主题切换 | Tweaks 面板 + CSS 变量切换 |
-| 多语言支持 | `data-i18n` 属性 + JSON 语言包 |
-| 博客集成 | 链接到现有 Hexo 博客或嵌入 RSS |
-| 3D 元素 | 引入 Three.js 做 WebGL 背景替代 Canvas 2D |
+`vercel.json` 已配置 SPA 路由回退。
 
 ---
 
 ## 10. 参考资源
 
-- **明日方舟官网**：`https://ak.hypergryph.com` — 暗色终端 UI 风格参考
-- **KPR Verse**：`https://kprverse.com` — 视差滚动叙事体验参考
-- **字体**：Orbitron (Google Fonts) — 几何无衬线 Display 字体
+- **明日方舟官网**：`https://ak.hypergryph.com` — 暗色终端 UI + 视差滚动
+- **KPR Verse**：`https://kprverse.com` — 沉浸式视差叙事交互
+- **字体**：Orbitron (几何无衬线) / JetBrains Mono (等宽终端)

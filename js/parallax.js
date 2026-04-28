@@ -1,354 +1,496 @@
 /**
- * MORNIKAR PORTFOLIO — PARALLAX BACKGROUND SYSTEM
- * Procedurally generates multi-layer parallax backgrounds using Canvas 2D
+ * MORNIKAR PORTFOLIO v4.0 — PARALLAX ENGINE
+ * 3-Layer Canvas Parallax System
+ * Layer 0 (deep): Grid + distant stars — speed 0.05
+ * Layer 1 (mid):  Geometric shapes + circuit traces — speed 0.15
+ * Layer 2 (front): Light beams + floating particles — speed 0.35
  */
 
-(function() {
+(function () {
     'use strict';
 
-    const layers = [
-        { id: 'bg-layer-1', speed: 0.1, type: 'grid' },
-        { id: 'bg-layer-2', speed: 0.3, type: 'shapes' },
-        { id: 'bg-layer-3', speed: 0.6, type: 'beams' }
-    ];
+    const layers = {
+        deep: { el: null, ctx: null, speed: .045, objects: [] },
+        mid: { el: null, ctx: null, speed: .15, objects: [] },
+        front: { el: null, ctx: null, speed: .35, objects: [] }
+    };
 
-    const canvases = [];
-    const contexts = [];
+    let W, H;
     let scrollY = 0;
-    let ticking = false;
-    let animationId = null;
+    let targetScroll = 0;
+    let mouseX = 0, mouseY = 0;
+    let rafId;
 
-    // ---- Initialize Canvases ----
+    // ---- Init ----
     function init() {
-        layers.forEach((layer, index) => {
-            const canvas = document.getElementById(layer.id);
-            if (!canvas) return;
+        layers.deep.el = document.getElementById('layer-deep');
+        layers.mid.el = document.getElementById('layer-mid');
+        layers.front.el = document.getElementById('layer-front');
 
-            const ctx = canvas.getContext('2d');
-            canvases[index] = canvas;
-            contexts[index] = ctx;
+        if (!layers.deep.el || !layers.mid.el || !layers.front.el) return;
 
-            resizeCanvas(canvas);
-            drawLayer(index, layer.type, 0);
-        });
+        layers.deep.ctx = layers.deep.el.getContext('2d');
+        layers.mid.ctx = layers.mid.el.getContext('2d');
+        layers.front.ctx = layers.front.el.getContext('2d');
 
-        window.addEventListener('resize', onResize);
+        resize();
+        buildLayerDeep();
+        buildLayerMid();
+        buildLayerFront();
+
+        window.addEventListener('resize', resize);
         window.addEventListener('scroll', onScroll, { passive: true });
+        document.addEventListener('mousemove', onMouseMove, { passive: true });
 
-        animate();
+        loop();
     }
 
-    function resizeCanvas(canvas) {
-        const dpr = window.devicePixelRatio || 1;
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        canvas.width = w * dpr;
-        canvas.height = h * dpr;
-        canvas.style.width = w + 'px';
-        canvas.style.height = h + 'px';
-        const ctx = canvas.getContext('2d');
-        ctx.scale(dpr, dpr);
-    }
-
-    function onResize() {
-        canvases.forEach((canvas, i) => {
-            if (canvas) resizeCanvas(canvas);
+    function resize() {
+        W = window.innerWidth;
+        H = window.innerHeight;
+        [layers.deep, layers.mid, layers.front].forEach(l => {
+            if (!l.el) return;
+            l.el.width = W * 1.6;
+            l.el.height = H * 1.6;
+            l.el.style.width = W * 1.6 + 'px';
+            l.el.style.height = H * 1.6 + 'px';
         });
-        requestDraw();
+        // Rebuild on major resize
+        if (layers.deep.objects.length > 0) {
+            buildLayerDeep();
+            buildLayerMid();
+            buildLayerFront();
+        }
     }
 
-    function onScroll() {
-        scrollY = window.scrollY;
-        if (!ticking) {
-            requestAnimationFrame(() => {
-                requestDraw();
-                ticking = false;
+    function onScroll(e) {
+        targetScroll = window.scrollY;
+    }
+    function onMouseMove(e) {
+        mouseX = (e.clientX / W - .5) * 2;   // -1 ~ 1
+        mouseY = (e.clientY / H - .5) * 2;
+    }
+
+    // ========================================
+    // LAYER 0: DEEP — Perspective grid + stars
+    // ========================================
+    function buildLayerDeep() {
+        const arr = [];
+        // Stars
+        for (let i = 0; i < 120; i++) {
+            arr.push({
+                type: 'star',
+                x: Math.random(),
+                y: Math.random(),
+                size: Math.random() * 1.5 + .3,
+                alpha: Math.random() * .5 + .1,
+                twinkleSpeed: Math.random() * .02 + .005,
+                twinklePhase: Math.random() * Math.PI * 2
             });
-            ticking = true;
         }
+        // Hexagonal grid dots (sparse)
+        const spacing = 80;
+        const cols = Math.ceil(W * 1.6 / spacing) + 4;
+        const rows = Math.ceil(H * 1.6 / spacing) + 4;
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const ox = (r % 2) * spacing * .5;
+                arr.push({
+                    type: 'gridDot',
+                    x: (c * spacing + ox) / (W * 1.6),
+                    y: (r * spacing * .866) / (H * 1.6),
+                    size: .8,
+                    alpha: .06 + Math.random() * .06
+                });
+            }
+        }
+        layers.deep.objects = arr;
     }
 
-    function requestDraw() {
-        if (animationId) cancelAnimationFrame(animationId);
-        animationId = requestAnimationFrame(() => {
-            layers.forEach((layer, i) => {
-                drawLayer(i, layer.type, scrollY * layer.speed);
-            });
-        });
-    }
+    function drawDeep(t) {
+        const ctx = layers.deep.ctx;
+        const cw = W * 1.6, ch = H * 1.6;
+        ctx.clearRect(0, 0, cw, ch);
 
-    function animate() {
-        requestDraw();
-    }
+        // Deep background gradient
+        const bgGrad = ctx.createLinearGradient(0, 0, cw, ch);
+        bgGrad.addColorStop(0, '#060610');
+        bgGrad.addColorStop(.5, '#0a0a18');
+        bgGrad.addColorStop(1, '#050510');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, cw, ch);
 
-    // ---- Layer 1: Perspective Grid ----
-    function drawGridLayer(ctx, w, h, offset) {
-        ctx.clearRect(0, 0, w, h);
+        // Subtle radial glow center
+        const rg = ctx.createRadialGradient(cw * .45, ch * .4, 0, cw * .45, ch * .4, cw * .5);
+        rg.addColorStop(0, 'rgba(0,212,255,.03)');
+        rg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = rg;
+        ctx.fillRect(0, 0, cw, ch);
 
-        const gridColor = 'rgba(0, 212, 255, 0.08)';
-        const vanishX = w / 2;
-        const vanishY = h / 2;
-        const gridSize = 60;
-        const perspective = 800;
+        // Draw objects with scroll offset
+        const offX = mouseX * 15 * layers.deep.speed;
+        const offY = -(scrollY * layers.deep.speed);
 
-        ctx.strokeStyle = gridColor;
-        ctx.lineWidth = 0.5;
+        for (const o of layers.deep.objects) {
+            let px = o.x * cw + offX;
+            let py = ((o.y * ch + offY) % ch + ch) % ch;
 
-        // Horizontal perspective lines
-        for (let i = -10; i <= 20; i++) {
-            const y = vanishY + (i * gridSize) - (offset * 0.5) % gridSize;
-            const scale = perspective / (perspective + (y - vanishY));
-            const lineWidth = w / scale;
-
-            ctx.beginPath();
-            ctx.moveTo(vanishX - lineWidth / 2, y);
-            ctx.lineTo(vanishX + lineWidth / 2, y);
-            ctx.stroke();
-        }
-
-        // Vertical perspective lines (radiating from vanishing point)
-        for (let i = -15; i <= 15; i++) {
-            const angle = (i * 8) * Math.PI / 180;
-            ctx.beginPath();
-            ctx.moveTo(vanishX, vanishY);
-            ctx.lineTo(
-                vanishX + Math.sin(angle) * w * 1.5,
-                vanishY + Math.cos(angle) * h * 1.5
-            );
-            ctx.stroke();
-        }
-
-        // Scattered dots (stars)
-        ctx.fillStyle = 'rgba(0, 212, 255, 0.15)';
-        const seed = 42;
-        for (let i = 0; i < 80; i++) {
-            const px = ((i * 137.5 + seed) % w);
-            const py = ((i * 89.7 + seed * 2) % h);
-            const size = 0.5 + (i % 3) * 0.5;
-            const blink = Math.sin(Date.now() * 0.001 + i) * 0.5 + 0.5;
-            ctx.globalAlpha = 0.2 * blink;
-            ctx.beginPath();
-            ctx.arc(px, py, size, 0, Math.PI * 2);
-            ctx.fill();
+            if (o.type === 'star') {
+                const twinkle = Math.sin(t * o.twinkleSpeed + o.twinklePhase);
+                ctx.globalAlpha = o.alpha * (.6 + twinkle * .4);
+                ctx.fillStyle = '#cceeff';
+                ctx.beginPath();
+                ctx.arc(px, py, o.size, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (o.type === 'gridDot') {
+                ctx.globalAlpha = o.alpha;
+                ctx.fillStyle = '#00d4ff';
+                ctx.beginPath();
+                ctx.arc(px, py, o.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
         ctx.globalAlpha = 1;
 
-        // Hexagonal patterns in corners
-        drawHexPattern(ctx, w * 0.1, h * 0.15, 30, offset);
-        drawHexPattern(ctx, w * 0.9, h * 0.8, 25, offset);
-    }
-
-    function drawHexPattern(ctx, cx, cy, size, offset) {
-        ctx.strokeStyle = 'rgba(0, 212, 255, 0.05)';
-        ctx.lineWidth = 0.5;
-
-        for (let ring = 1; ring <= 3; ring++) {
-            const r = size * ring;
-            ctx.beginPath();
-            for (let i = 0; i < 6; i++) {
-                const angle = (i * 60 + offset * 0.1) * Math.PI / 180;
-                const x = cx + r * Math.cos(angle);
-                const y = cy + r * Math.sin(angle);
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            }
-            ctx.closePath();
-            ctx.stroke();
-        }
-    }
-
-    // ---- Layer 2: Floating Geometric Shapes ----
-    function drawShapesLayer(ctx, w, h, offset) {
-        ctx.clearRect(0, 0, w, h);
-
-        const shapes = [
-            { type: 'cube', x: 0.15, y: 0.25, size: 40, rot: 0.5 },
-            { type: 'triangle', x: 0.75, y: 0.15, size: 35, rot: 1.2 },
-            { type: 'cube', x: 0.85, y: 0.65, size: 50, rot: 0.8 },
-            { type: 'triangle', x: 0.25, y: 0.75, size: 30, rot: 1.5 },
-            { type: 'line', x: 0.5, y: 0.4, size: 80, rot: 0.3 },
-            { type: 'cube', x: 0.6, y: 0.85, size: 25, rot: 2.0 },
-            { type: 'triangle', x: 0.1, y: 0.55, size: 20, rot: 0.7 },
-            { type: 'line', x: 0.9, y: 0.35, size: 60, rot: 1.8 },
-        ];
-
-        shapes.forEach((shape, i) => {
-            const x = shape.x * w;
-            const y = shape.y * h + (offset * (0.3 + i * 0.05)) % h * 0.3;
-            const rotation = shape.rot + offset * 0.0005;
-
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(rotation);
-
-            ctx.strokeStyle = 'rgba(0, 212, 255, 0.12)';
-            ctx.lineWidth = 1;
-            ctx.shadowColor = 'rgba(0, 212, 255, 0.3)';
-            ctx.shadowBlur = 10;
-
-            if (shape.type === 'cube') {
-                drawWireCube(ctx, 0, 0, shape.size);
-            } else if (shape.type === 'triangle') {
-                drawWireTriangle(ctx, 0, 0, shape.size);
-            } else if (shape.type === 'line') {
-                drawCircuitLine(ctx, 0, 0, shape.size);
-            }
-
-            ctx.restore();
-        });
-    }
-
-    function drawWireCube(ctx, x, y, size) {
-        const s = size / 2;
-        // Front face
-        ctx.strokeRect(x - s, y - s, size, size);
-        // Back face (offset)
-        const o = s * 0.4;
-        ctx.strokeRect(x - s + o, y - s - o, size, size);
-        // Connecting lines
-        ctx.beginPath();
-        ctx.moveTo(x - s, y - s);
-        ctx.lineTo(x - s + o, y - s - o);
-        ctx.moveTo(x + s, y - s);
-        ctx.lineTo(x + s + o, y - s - o);
-        ctx.moveTo(x - s, y + s);
-        ctx.lineTo(x - s + o, y + s - o);
-        ctx.moveTo(x + s, y + s);
-        ctx.lineTo(x + s + o, y + s - o);
-        ctx.stroke();
-    }
-
-    function drawWireTriangle(ctx, x, y, size) {
-        const s = size / 2;
-        ctx.beginPath();
-        ctx.moveTo(x, y - s);
-        ctx.lineTo(x + s * 0.866, y + s * 0.5);
-        ctx.lineTo(x - s * 0.866, y + s * 0.5);
-        ctx.closePath();
-        ctx.stroke();
-
-        // Inner triangle
-        ctx.beginPath();
-        ctx.moveTo(x, y - s * 0.3);
-        ctx.lineTo(x + s * 0.26, y + s * 0.15);
-        ctx.lineTo(x - s * 0.26, y + s * 0.15);
-        ctx.closePath();
-        ctx.stroke();
-    }
-
-    function drawCircuitLine(ctx, x, y, size) {
-        ctx.beginPath();
-        ctx.moveTo(x - size / 2, y);
-        ctx.lineTo(x - size / 4, y);
-        ctx.lineTo(x - size / 8, y - size / 4);
-        ctx.lineTo(x + size / 8, y + size / 4);
-        ctx.lineTo(x + size / 4, y);
-        ctx.lineTo(x + size / 2, y);
-        ctx.stroke();
-
-        // Dots on line
-        ctx.fillStyle = 'rgba(0, 212, 255, 0.3)';
-        [-size/2, -size/4, size/4, size/2].forEach(dx => {
-            ctx.beginPath();
-            ctx.arc(x + dx, y, 2, 0, Math.PI * 2);
-            ctx.fill();
-        });
-    }
-
-    // ---- Layer 3: Light Beams ----
-    function drawBeamsLayer(ctx, w, h, offset) {
-        ctx.clearRect(0, 0, w, h);
-
-        const beams = [
-            { x1: 0, y1: 0, x2: w * 0.6, y2: h, width: 100, alpha: 0.03 },
-            { x1: w, y1: 0, x2: w * 0.4, y2: h, width: 80, alpha: 0.02 },
-            { x1: w * 0.3, y1: 0, x2: w * 0.1, y2: h, width: 60, alpha: 0.025 },
-        ];
-
-        beams.forEach((beam, i) => {
-            const shift = Math.sin(offset * 0.001 + i) * 20;
-
-            ctx.save();
-            ctx.globalAlpha = beam.alpha;
-
-            const gradient = ctx.createLinearGradient(
-                beam.x1, beam.y1 + shift,
-                beam.x2, beam.y2 + shift
-            );
-            gradient.addColorStop(0, 'rgba(0, 212, 255, 0)');
-            gradient.addColorStop(0.5, 'rgba(0, 212, 255, 0.8)');
-            gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
-
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.moveTo(beam.x1 - beam.width / 2, beam.y1);
-            ctx.lineTo(beam.x1 + beam.width / 2, beam.y1);
-            ctx.lineTo(beam.x2 + beam.width / 3, beam.y2);
-            ctx.lineTo(beam.x2 - beam.width / 3, beam.y2);
-            ctx.closePath();
-            ctx.fill();
-
-            ctx.restore();
-        });
-
-        // Floating particles
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-        for (let i = 0; i < 30; i++) {
-            const px = ((i * 73.3) % w);
-            const py = ((i * 47.1 + offset * 0.2) % h);
-            const size = 0.5 + (i % 2);
-            ctx.globalAlpha = 0.15 + Math.sin(offset * 0.002 + i) * 0.1;
-            ctx.beginPath();
-            ctx.arc(px, py, size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-
-        // Corner lens flares
-        drawLensFlare(ctx, w * 0.05, h * 0.1, 40, offset);
-        drawLensFlare(ctx, w * 0.95, h * 0.9, 30, offset);
-    }
-
-    function drawLensFlare(ctx, x, y, size, offset) {
-        const pulse = Math.sin(offset * 0.002) * 0.5 + 0.5;
+        // Draw perspective grid lines (vanishing point at center-top)
         ctx.save();
-        ctx.globalAlpha = 0.05 * pulse;
+        ctx.translate(cw * .5 + offX * .3, offY * .2);
+        ctx.strokeStyle = 'rgba(0,212,255,.04)';
+        ctx.lineWidth = .5;
+        const vanishY = -ch * .15;
+        const horizonW = cw * 1.8;
+        // Radial lines from vanishing point
+        for (let i = -10; i <= 10; i++) {
+            ctx.beginPath();
+            ctx.moveTo(0, vanishY);
+            ctx.lineTo(i * (horizonW / 20), ch);
+            ctx.stroke();
+        }
+        // Horizontal lines getting closer toward vanishing point
+        const hLines = 20;
+        for (let i = 1; i <= hLines; i++) {
+            const ratio = i / hLines;
+            const y = vanishY + (ch - vanishY) * Math.pow(ratio, 1.7);
+            const spread = ratio * horizonW * .55;
+            ctx.globalAlpha = ratio * .07;
+            ctx.beginPath();
+            ctx.moveTo(-spread, y);
+            ctx.lineTo(spread, y);
+            ctx.stroke();
+        }
+        ctx.restore();
+        ctx.globalAlpha = 1;
+    }
 
-        const gradient = ctx.createRadialGradient(x, y, 0, x, y, size);
-        gradient.addColorStop(0, 'rgba(0, 212, 255, 1)');
-        gradient.addColorStop(0.5, 'rgba(0, 212, 255, 0.3)');
-        gradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
+    // ========================================
+    // LAYER 1: MID — Triangles + Circuit traces + Hexagons
+    // ========================================
+    function buildLayerMid() {
+        const arr = [];
+        // Large triangles (wireframe)
+        for (let i = 0; i < 8; i++) {
+            const size = 40 + Math.random() * 100;
+            arr.push({
+                type: 'tri',
+                x: Math.random(), y: Math.random(),
+                size: size,
+                rot: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - .5) * .0003,
+                alpha: .04 + Math.random() * .08,
+                stroke: 1,
+                color: Math.random() > .7 ? '#ff3344' : '#00d4ff'
+            });
+        }
+        // Small triangles (filled, very dim)
+        for (let i = 0; i < 25; i++) {
+            arr.push({
+                type: 'triFilled',
+                x: Math.random(), y: Math.random(),
+                size: 8 + Math.random() * 30,
+                rot: Math.random() * Math.PI * 2,
+                rotSpeed: (Math.random() - .5) * .0008,
+                alpha: .02 + Math.random() * .04,
+                color: '#00d4ff'
+            });
+        }
+        // Circuit traces
+        for (let i = 0; i < 12; i++) {
+            const pts = [];
+            let cx = Math.random();
+            let cy = Math.random();
+            const segments = 3 + Math.floor(Math.random() * 4);
+            for (let s = 0; s <= segments; s++) {
+                pts.push({ x: cx, y: cy });
+                if (s < segments) {
+                    switch (Math.floor(Math.random() * 3)) {
+                        case 0: cx += (Math.random() - .5) * .2; break;
+                        case 1: cy += (Math.random() - .5) * .15; break;
+                        default: cx += (Math.random() - .5) * .15; cy += (Math.random() - .5) * .1;
+                    }
+                }
+            }
+            arr.push({
+                type: 'circuit',
+                points: pts,
+                alpha: .06 + Math.random() * .08,
+                pulsePhase: Math.random() * Math.PI * 2
+            });
+        }
+        // Hexagon outlines
+        for (let i = 0; i < 5; i++) {
+            arr.push({
+                type: 'hex',
+                x: Math.random(), y: Math.random(),
+                size: 30 + Math.random() * 70,
+                rot: Math.random() * Math.PI,
+                rotSpeed: (Math.random() - .5) * .0004,
+                alpha: .03 + Math.random() * .05
+            });
+        }
+        layers.mid.objects = arr;
+    }
 
-        ctx.fillStyle = gradient;
+    function drawTri(ctx, x, y, size, rot, strokeW, color, alpha) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rot);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = strokeW;
+        ctx.globalAlpha = alpha;
         ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
+        for (let i = 0; i < 3; i++) {
+            const a = (i / 3) * Math.PI * 2 - Math.PI / 2;
+            const px = Math.cos(a) * size;
+            const py = Math.sin(a) * size;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    function drawTriFilled(ctx, x, y, size, rot, color, alpha) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rot);
+        ctx.fillStyle = color;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        for (let i = 0; i < 3; i++) {
+            const a = (i / 3) * Math.PI * 2 - Math.PI / 2;
+            const px = Math.cos(a) * size;
+            const py = Math.sin(a) * size;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
         ctx.fill();
         ctx.restore();
     }
 
-    // ---- Main Draw Function ----
-    function drawLayer(index, type, offset) {
-        const canvas = canvases[index];
-        const ctx = contexts[index];
-        if (!canvas || !ctx) return;
-
-        const w = canvas.width / (window.devicePixelRatio || 1);
-        const h = canvas.height / (window.devicePixelRatio || 1);
-
-        switch (type) {
-            case 'grid':
-                drawGridLayer(ctx, w, h, offset);
-                break;
-            case 'shapes':
-                drawShapesLayer(ctx, w, h, offset);
-                break;
-            case 'beams':
-                drawBeamsLayer(ctx, w, h, offset);
-                break;
+    function drawHex(ctx, x, y, size, rot, alpha) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(rot);
+        ctx.strokeStyle = '#00d4ff';
+        ctx.lineWidth = .8;
+        ctx.globalAlpha = alpha;
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+            const a = (i / 6) * Math.PI * 2;
+            const px = Math.cos(a) * size;
+            const py = Math.sin(a) * size;
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
         }
+        ctx.closePath();
+        ctx.stroke();
+        ctx.restore();
     }
 
-    // ---- Start ----
+    function drawMid(t) {
+        const ctx = layers.mid.ctx;
+        const cw = W * 1.6, ch = H * 1.6;
+        ctx.clearRect(0, 0, cw, ch);
+
+        const offX = mouseX * 35 * layers.mid.speed;
+        const offY = -(scrollY * layers.mid.speed);
+
+        for (const o of layers.mid.objects) {
+            let px = o.x * cw + offX;
+            let py = ((o.y * ch + offY) % ch + ch) % ch;
+
+            if (o.type === 'tri') {
+                o.rot += o.rotSpeed;
+                drawTri(ctx, px, py, o.size, o.rot, o.stroke, o.color, o.alpha);
+            } else if (o.type === 'triFilled') {
+                o.rot += o.rotSpeed;
+                drawTriFilled(ctx, px, py, o.size, o.rot, o.color, o.alpha);
+            } else if (o.type === 'circuit') {
+                const pulseAlpha = o.alpha * (.7 + .3 * Math.sin(t * .001 + o.pulsePhase));
+                ctx.strokeStyle = '#00d4ff';
+                ctx.lineWidth = .6;
+                ctx.globalAlpha = pulseAlpha;
+                ctx.beginPath();
+                o.points.forEach((p, i) => {
+                    const pxx = p.x * cw + offX;
+                    const pyy = ((p.y * ch + offY) % ch + ch) % ch;
+                    if (i === 0) ctx.moveTo(pxx, pyy); else ctx.lineTo(pxx, pyy);
+                });
+                ctx.stroke();
+
+                // Nodes at vertices
+                ctx.fillStyle = '#00d4ff';
+                o.points.forEach(p => {
+                    const pxx = p.x * cw + offX;
+                    const pyy = ((p.y * ch + offY) % ch + ch) % ch;
+                    ctx.globalAlpha = pulseAlpha * 2;
+                    ctx.beginPath();
+                    ctx.arc(pxx, pyy, 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            } else if (o.type === 'hex') {
+                o.rot += o.rotSpeed;
+                drawHex(ctx, px, py, o.size, o.rot, o.alpha);
+            }
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    // ========================================
+    // LAYER 2: FRONT — Light beams + floating particles
+    // ========================================
+    function buildLayerFront() {
+        const arr = [];
+        // Diagonal light beams
+        for (let i = 0; i < 5; i++) {
+            arr.push({
+                type: 'beam',
+                x: Math.random(), y: Math.random() - .2,
+                width: 30 + Math.random() * 80,
+                length: H * 1.2 + Math.random() * H,
+                angle: -.4 + Math.random() * .2,
+                alpha: .01 + Math.random() * .025,
+                hue: Math.random() > .7 ? 340 : 190 // cyan or red-ish
+            });
+        }
+        // Floating dust particles
+        for (let i = 0; i < 60; i++) {
+            arr.push({
+                type: 'dust',
+                x: Math.random(), y: Math.random(),
+                size: .5 + Math.random() * 2,
+                vx: (Math.random() - .5) * .0002,
+                vy: (Math.random() - .5) * .00015 - .0001,
+                alpha: .2 + Math.random() * .5
+            });
+        }
+        // Small bright particles (like sparks)
+        for (let i = 0; i < 15; i++) {
+            arr.push({
+                type: 'spark',
+                x: Math.random(), y: Math.random(),
+                size: 1 + Math.random() * 2,
+                vx: (Math.random() - .5) * .0003,
+                vy: (Math.random() - .5) * .0002,
+                alpha: .3 + Math.random() * .4
+            });
+        }
+        layers.front.objects = arr;
+    }
+
+    function drawFront(t) {
+        const ctx = layers.front.ctx;
+        const cw = W * 1.6, ch = H * 1.6;
+        ctx.clearRect(0, 0, cw, ch);
+
+        const offX = mouseX * 65 * layers.front.speed;
+        const offY = -(scrollY * layers.front.speed);
+
+        for (const o of layers.front.objects) {
+            let px = o.x * cw + offX;
+            let py = ((o.y * ch + offY) % ch + ch) % ch;
+
+            if (o.type === 'beam') {
+                ctx.save();
+                ctx.translate(px, py);
+                ctx.rotate(o.angle);
+                const grad = ctx.createLinearGradient(0, 0, 0, o.length);
+                if (o.hue === 190) {
+                    grad.addColorStop(0, 'rgba(0,212,255,' + o.alpha + ')');
+                    grad.addColorStop(.5, 'rgba(0,180,240,' + (o.alpha * .3) + ')');
+                    grad.addColorStop(1, 'rgba(0,150,220,0)');
+                } else {
+                    grad.addColorStop(0, 'rgba(255,51,68,' + o.alpha + ')');
+                    grad.addColorStop(.5, 'rgba(200,40,60,' + (o.alpha * .3) + ')');
+                    grad.addColorStop(1, 'rgba(160,30,50,0)');
+                }
+                ctx.fillStyle = grad;
+                ctx.fillRect(-o.width / 2, 0, o.width, o.length);
+                ctx.restore();
+            } else if (o.type === 'dust') {
+                o.x += o.vx;
+                o.y += o.vy;
+                // Wrap
+                if (o.x < 0) o.x = 1;
+                if (o.x > 1) o.x = 0;
+                if (o.y < 0) o.y = 1;
+                if (o.y > 1) o.y = 0;
+                ctx.globalAlpha = o.alpha * (.5 + .5 * Math.sin(t * .002 + o.x * 10));
+                ctx.fillStyle = '#aaccff';
+                ctx.beginPath();
+                ctx.arc(px, py, o.size, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (o.type === 'spark') {
+                o.x += o.vx;
+                o.y += o.vy;
+                if (o.x < 0) o.x = 1;
+                if (o.x > 1) o.x = 0;
+                if (o.y < 0) o.y = 1;
+                if (o.y > 1) o.y = 0;
+                ctx.globalAlpha = o.alpha * (.4 + .6 * Math.abs(Math.sin(t * .003 + o.y * 15)));
+                ctx.fillStyle = '#00d4ff';
+                ctx.shadowColor = '#00d4ff';
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.arc(px, py, o.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+        ctx.globalAlpha = 1;
+    }
+
+    // ========================================
+    // MAIN LOOP
+    // ========================================
+    function loop(t) {
+        // Smooth scroll interpolation
+        scrollY += (targetScroll - scrollY) * .08;
+
+        // Apply transforms to canvas elements
+        const deepOff = scrollY * layers.deep.speed + mouseX * 12 * layers.deep.speed;
+        const midOff = scrollY * layers.mid.speed + mouseX * 28 * layers.mid.speed;
+        const frontOff = scrollY * layers.front.speed + mouseX * 50 * layers.front.speed;
+
+        if (layers.deep.el) {
+            layers.deep.el.style.transform = `translate(${-W*.2+mouseX*5}px, ${-H*.2+deepOff}px)`;
+        }
+        if (layers.mid.el) {
+            layers.mid.el.style.transform = `translate(${-W*.2+mouseX*12}px, ${-H*.2+midOff}px)`;
+        }
+        if (layers.front.el) {
+            layers.front.el.style.transform = `translate(${-W*.2+mouseX*22}px, ${-H*.2+frontOff}px)`;
+        }
+
+        drawDeep(t || 0);
+        drawMid(t || 0);
+        drawFront(t || 0);
+
+        rafId = requestAnimationFrame(loop);
+    }
+
+    // ---- Expose public API ----
+    window.PARALLAX_ENGINE = { init, destroy: () => cancelAnimationFrame(rafId) };
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {

@@ -10,492 +10,312 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <!-- 加载画面 -->
+    <!-- ==================== LOADER ==================== -->
     <div id="loader" class="loader">
-        <div class="loader-content">
+        <div class="loader-inner">
             <div class="loader-logo">MORNIKAR</div>
-            <div class="loader-bar">
-                <div class="loader-progress"></div>
+            <div class="loader-track">
+                <div class="loader-fill"></div>
             </div>
-            <div class="loader-text">
-                <span class="loader-status">INITIALIZING</span>
-                <span class="loader-percent">0%</span>
+            <div class="loader-meta">
+                <span class="loader-status">INITIALIZING SYSTEM</span>
+                <span class="loader-pct">0%</span>
             </div>
-            <div class="loader-code">
-                <span class="code-line">// establishing secure connection...</span>
-                <span class="code-line">// loading portfolio assets...</span>
-                <span class="code-line">// rendering parallax layers...</span>
+            <div class="loader-log">
+                <span class="log-line">// booting kernel...</span>
+                <span class="log-line">// loading parallax engine...</span>
+                <span class="log-line">// establishing connection...</span>
             </div>
         </div>
     </div>
 
-    <!-- 扫描线覆盖层 -->
+    <!-- ==================== PARALLAX SCENE ==================== -->
+    <div id="parallax-scene" class="parallax-scene">
+        <!-- Layer 0: Deepest — Grid + Stars (slowest) -->
+        <canvas id="layer-deep" class="p-layer p-layer--deep"></canvas>
+        <!-- Layer 1: Mid — Geometric shapes + circuit traces -->
+        <canvas id="layer-mid" class="p-layer p-layer--mid"></canvas>
+        <!-- Layer 2: Fore — Light beams + particles (fastest) -->
+        <canvas id="layer-front" class="p-layer p-layer--front"></canvas>
+    </div>
+
+    <!-- Triangle + Circuit overlay particles -->
+    <canvas id="fx-canvas" class="fx-canvas"></canvas>
+
+    <!-- Noise / grain texture overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Scanlines -->
     <div class="scanlines"></div>
 
-    <!-- 视差背景层 -->
-    <div class="parallax-container">
-        <canvas id="bg-layer-1" class="parallax-layer" data-speed="0.1"></canvas>
-        <canvas id="bg-layer-2" class="parallax-layer" data-speed="0.3"></canvas>
-        <canvas id="bg-layer-3" class="parallax-layer" data-speed="0.6"></canvas>
-    </div>
-
-    <!-- 粒子系统 -->
-    <canvas id="particles" class="particles-canvas"></canvas>
-
-    <!-- 导航 -->
+    <!-- ==================== NAVIGATION ==================== -->
     <nav class="nav" id="nav">
-        <div class="nav-brand">
-            <span class="nav-brand-icon">//</span>
-            <span class="nav-brand-text">MORNIKAR</span>
+        <div class="nav-left">
+            <span class="nav-marker">///</span>
+            <span class="nav-brand">MORNIKAR</span>
         </div>
-        <div class="nav-links">
-            <a href="#hero" class="nav-link active">
-                <span class="nav-link-en">INDEX</span>
-                <span class="nav-link-cn">首页</span>
+        <div class="nav-center" id="nav-center">
+            <a href="#hero" class="nav-item active" data-section="hero">
+                <span class="nav-en">INDEX</span><span class="nav-cn">首页</span>
             </a>
-            <a href="#projects" class="nav-link">
-                <span class="nav-link-en">PROJECTS</span>
-                <span class="nav-link-cn">项目</span>
+            <a href="#projects" class="nav-item" data-section="projects">
+                <span class="nav-en">WORKS</span><span class="nav-cn">项目</span>
             </a>
-            <a href="#design" class="nav-link">
-                <span class="nav-link-en">DESIGN</span>
-                <span class="nav-link-cn">设计</span>
+            <a href="#open-source" class="nav-item" data-section="open-source">
+                <span class="nav-en">SOURCE</span><span class="nav-cn">开源</span>
             </a>
-            <a href="#open-source" class="nav-link">
-                <span class="nav-link-en">OPEN SOURCE</span>
-                <span class="nav-link-cn">开源</span>
-            </a>
-            <a href="#about" class="nav-link">
-                <span class="nav-link-en">PROFILE</span>
-                <span class="nav-link-cn">关于</span>
+            <a href="#about" class="nav-item" data-section="about">
+                <span class="nav-en">TERMINAL</span><span class="nav-cn">关于</span>
             </a>
         </div>
-        <div class="nav-status">
-            <span class="status-dot"></span>
-            <span class="status-text">ONLINE</span>
+        <div class="nav-right">
+            <span class="nav-signal"><i></i>ONLINE</span>
         </div>
     </nav>
 
-    <!-- 主内容 -->
-    <main class="main">
-        <!-- 首页 Hero -->
-        <section id="hero" class="section hero">
-            <div class="hero-content">
-                <div class="hero-label">
-                    <span class="label-line"></span>
-                    <span class="label-text">PORTFOLIO v3.0</span>
-                </div>
-                <h1 class="hero-title">
-                    <span class="title-line" data-text="MORNIKAR">MORNIKAR</span>
-                    <span class="title-line title-line-sub" data-text="CREATIVE ENGINEER">CREATIVE ENGINEER</span>
-                </h1>
-                <div class="hero-desc">
-                    <p class="typewriter" data-text="全栈开发 / AI 产品架构 / 视觉设计"></p>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-num" data-count="15">00</span>
-                        <span class="stat-label">PROJECTS</span>
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="content">
+
+        <!-- ===== SECTION: HERO ===== -->
+        <section id="hero" class="sect hero-sect">
+            <div class="hero-grid">
+                <div class="hero-left">
+                    <div class="hero-tag">
+                        <span class="tag-line"></span>
+                        <span class="tag-text">PORTFOLIO // 2026</span>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-num" data-count="8">00</span>
-                        <span class="stat-label">OPEN SOURCE</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-num" data-count="5">00</span>
-                        <span class="stat-label">YEARS</span>
+                    <h1 class="hero-title">
+                        <span class="title-main">MORNIKAR</span>
+                        <span class="title-sub">CREATIVE ENGINEER &amp; ARCHITECT</span>
+                    </h1>
+                    <p class="hero-type" data-text="全栈开发 · AI 产品架构 · 视觉设计 · 开源构建者"></p>
+                    <div class="hero-row">
+                        <a href="#projects" class="btn btn--glow">
+                            <span>EXPLORE WORKS</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="https://github.com/mornikar" target="_blank" class="btn btn--ghost">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                            GITHUB
+                        </a>
                     </div>
                 </div>
-                <div class="hero-actions">
-                    <a href="#projects" class="btn btn-primary">
-                        <span class="btn-text">EXPLORE WORKS</span>
-                        <span class="btn-icon">→</span>
-                    </a>
-                    <a href="https://github.com/mornikar" target="_blank" class="btn btn-outline">
-                        <span class="btn-text">GITHUB</span>
-                        <span class="btn-icon">↗</span>
-                    </a>
+                <div class="hero-right">
+                    <div class="hero-stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-n" data-count="15">00</span>
+                            <span class="stat-l">PROJECTS</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-n" data-count="08">00</span>
+                            <span class="stat-l">REPOS</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-n" data-count="05">00</span>
+                            <span class="stat-l">YEARS</span>
+                        </div>
+                    </div>
+                    <div class="hero-terminal-snippet">
+                        <div class="ht-lines">
+                            <span><b class="c-cyan">$</b> cat identity.json</span>
+                            <span>{ "role": "builder", "focus": ["AI", "web", "design"] }</span>
+                            <span class="ht-cursor">▊</span>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="hero-scroll">
-                <span class="scroll-text">SCROLL</span>
-                <div class="scroll-line"></div>
+            <div class="scroll-hint">
+                <span>SCROLL TO EXPLORE</span>
+                <div class="scroll-bar"><div class="scroll-dot"></div></div>
             </div>
         </section>
 
-        <!-- 项目展示 -->
-        <section id="projects" class="section projects">
-            <div class="section-header">
-                <div class="section-label">
-                    <span class="label-index">01</span>
-                    <span class="label-line"></span>
+        <!-- ===== SECTION: PROJECTS ===== -->
+        <section id="projects" class="sect proj-sect">
+            <div class="sect-head reveal">
+                <div class="sh-top">
+                    <span class="sh-num">01</span>
+                    <span class="sh-rule"></span>
                 </div>
-                <h2 class="section-title">PROJECTS // 项目</h2>
-                <p class="section-desc">技术驱动的创意项目，从 AI 产品架构到全栈开发</p>
+                <h2 class="sh-title">PROJECTS // 项目</h2>
+                <p class="sh-desc">技术驱动的创意项目，从 AI 架构到全栈工程</p>
             </div>
-            <div class="projects-grid">
-                <article class="project-card project-card-large" data-parallax="1.2">
-                    <div class="project-visual">
-                        <div class="project-bg" style="background: linear-gradient(135deg, #0d1b2a 0%, #1b2838 50%, #0d1b2a 100%);"></div>
-                        <div class="project-icon">
-                            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M32 4L4 20v24l28 16 28-16V20L32 4z"/>
-                                <path d="M32 36V20M32 36l-14-8M32 36l14-8"/>
-                                <circle cx="32" cy="20" r="3"/>
-                            </svg>
-                        </div>
-                        <div class="project-glitch" data-text="AI PM SKILLS">AI PM SKILLS</div>
+
+            <div class="proj-grid">
+                <!-- Featured: Large Card -->
+                <article class="proj-card proj-card--lg reveal">
+                    <div class="proj-visual">
+                        <div class="proj-bg grad-a"></div>
+                        <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M32 4L4 20v24l28 16 28-16V20L32 4z"/><path d="M32 36V20M32 36l-14-8M32 36l14-8"/><circle cx="32" cy="20" r="3"/></svg>
+                        <div class="proj-watermark">AI PM SKILLS</div>
                     </div>
-                    <div class="project-info">
-                        <div class="project-meta">
-                            <span class="project-tag">AI 架构</span>
-                            <span class="project-tag">多 Agent</span>
-                            <span class="project-tag">开源</span>
+                    <div class="proj-body">
+                        <div class="proj-tags">
+                            <span>AI 架构</span><span>多 Agent</span><span>开源</span>
                         </div>
-                        <h3 class="project-name">AI PM Skills v3.1 Ironforge</h3>
-                        <p class="project-desc">业界首创 Skill+Harness 双轨架构多 Agent 协作开发框架。10+ 专业 Skill 角色，支持全链路编排与独立运行模式。</p>
-                        <div class="project-tech">
-                            <span class="tech-item">Node.js</span>
-                            <span class="tech-item">TypeScript</span>
-                            <span class="tech-item">YAML</span>
-                        </div>
-                        <a href="https://github.com/mornikar/Harness_Multi-Agent_AI_PM" target="_blank" class="project-link">
-                            VIEW PROJECT <span>→</span>
-                        </a>
+                        <h3 class="proj-name">AI PM Skills v3.1 Ironforge</h3>
+                        <p class="proj-desc">业界首创 Skill+Harness 双轨架构多 Agent 协作开发框架。10+ 专业 Skill 角色，支持全链路编排与独立运行模式。</p>
+                        <div class="proj-stack"><i>TypeScript</i><i>Node.js</i><i>YAML</i></div>
+                        <a href="https://github.com/mornikar/Harness_Multi-Agent_AI_PM" target="_blank" class="proj-link">VIEW PROJECT <span>→</span></a>
                     </div>
                 </article>
 
-                <article class="project-card" data-parallax="0.8">
-                    <div class="project-visual">
-                        <div class="project-bg" style="background: linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #1a0a2e 100%);"></div>
-                        <div class="project-icon">
-                            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <rect x="8" y="8" width="48" height="48" rx="2"/>
-                                <path d="M8 24h48M24 8v48"/>
-                                <circle cx="24" cy="24" r="4"/>
-                            </svg>
-                        </div>
+                <!-- Card 2 -->
+                <article class="proj-card reveal">
+                    <div class="proj-visual">
+                        <div class="proj-bg grad-b"></div>
+                        <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="8" width="48" height="48" rx="2"/><path d="M8 24h48M24 8v48"/><circle cx="24" cy="24" r="4"/></svg>
                     </div>
-                    <div class="project-info">
-                        <div class="project-meta">
-                            <span class="project-tag">Wiki</span>
-                            <span class="project-tag">Hexo</span>
-                            <span class="project-tag">RAG</span>
-                        </div>
-                        <h3 class="project-name">Mornikar Wiki</h3>
-                        <p class="project-desc">自生长知识库系统。LLM Wiki + Hexo 集成，支持 AI 对话、知识图谱、反向链接、多模型接入。</p>
-                        <div class="project-tech">
-                            <span class="tech-item">Hexo</span>
-                            <span class="tech-item">Vue</span>
-                            <span class="tech-item">Dify</span>
-                        </div>
-                        <a href="https://mornikar.github.io" target="_blank" class="project-link">
-                            VIEW PROJECT <span>→</span>
-                        </a>
+                    <div class="proj-body">
+                        <div class="proj-tags"><span>Wiki</span><span>Hexo</span><span>RAG</span></div>
+                        <h3 class="proj-name">Mornikar Wiki</h3>
+                        <p class="proj-desc">自生长知识库系统。LLM Wiki + Hexo 集成，支持 AI 对话、知识图谱、反向链接、多模型接入。</p>
+                        <div class="proj-stack"><i>Hexo</i><i>Vue</i><i>Dify</i></div>
+                        <a href="https://mornikar.github.io" target="_blank" class="proj-link">VIEW PROJECT <span>→</span></a>
                     </div>
                 </article>
 
-                <article class="project-card" data-parallax="1.0">
-                    <div class="project-visual">
-                        <div class="project-bg" style="background: linear-gradient(135deg, #0a1a0a 0%, #1a2e1a 50%, #0a1a0a 100%);"></div>
-                        <div class="project-icon">
-                            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M32 4v56M4 32h56"/>
-                                <circle cx="32" cy="32" r="12"/>
-                                <circle cx="32" cy="32" r="20"/>
-                            </svg>
-                        </div>
+                <!-- Card 3 -->
+                <article class="proj-card reveal">
+                    <div class="proj-visual">
+                        <div class="proj-bg grad-c"></div>
+                        <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="10" y="10" width="44" height="30" rx="2"/><path d="M10 26h44M20 48h24M27 38v10M37 38v10"/></svg>
                     </div>
-                    <div class="project-info">
-                        <div class="project-meta">
-                            <span class="project-tag">Electron</span>
-                            <span class="project-tag">Vue 3</span>
-                            <span class="project-tag">Desktop</span>
-                        </div>
-                        <h3 class="project-name">LobsterLauncher</h3>
-                        <p class="project-desc">OpenClaw 桌面启动器。服务管理、Skills 黑名单、本地模型管理、内置终端，科技感暗色 UI。</p>
-                        <div class="project-tech">
-                            <span class="tech-item">Electron</span>
-                            <span class="tech-item">Vue 3</span>
-                            <span class="tech-item">node-pty</span>
-                        </div>
-                        <a href="https://github.com/mornikar/OpenClaw_Launcher_LobsterLauncher" target="_blank" class="project-link">
-                            VIEW PROJECT <span>→</span>
-                        </a>
+                    <div class="proj-body">
+                        <div class="proj-tags"><span>Electron</span><span>Vue 3</span><span>Desktop</span></div>
+                        <h3 class="proj-name">LobsterLauncher</h3>
+                        <p class="proj-desc">OpenClaw 桌面启动器。服务管理、Skills 黑名单、本地模型管理、内置终端，暗色科技 UI。</p>
+                        <div class="proj-stack"><i>Electron</i><i>Vue 3</i><i>node-pty</i></div>
+                        <a href="https://github.com/mornikar/OpenClaw_Launcher_LobsterLauncher" target="_blank" class="proj-link">VIEW PROJECT <span>→</span></a>
                     </div>
                 </article>
 
-                <article class="project-card project-card-wide" data-parallax="0.9">
-                    <div class="project-visual">
-                        <div class="project-bg" style="background: linear-gradient(135deg, #1a0a0a 0%, #3d1a1a 50%, #1a0a0a 100%);"></div>
-                        <div class="project-icon">
-                            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M16 48V16l16-8 16 8v32l-16 8-16-8z"/>
-                                <path d="M32 8v48"/>
-                                <path d="M16 16l16 8 16-8"/>
-                                <path d="M16 32l16 8 16-8"/>
-                            </svg>
-                        </div>
+                <!-- Wide Card -->
+                <article class="proj-card proj-card--wd reveal">
+                    <div class="proj-visual">
+                        <div class="proj-bg grad-d"></div>
+                        <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M16 48V16l16-8 16 8v32l-16 8-16-8z"/><path d="M32 8v48"/><path d="M16 16l16 8 16-8"/><path d="M16 32l16 8 16-8"/></svg>
                     </div>
-                    <div class="project-info">
-                        <div class="project-meta">
-                            <span class="project-tag">Finance</span>
-                            <span class="project-tag">Data</span>
-                            <span class="project-tag">Plugin</span>
-                        </div>
-                        <h3 class="project-name">Finance Data Plugin</h3>
-                        <p class="project-desc">金融数据检索插件，覆盖 A股/港股/美股、指数、基金、宏观等 209 个 API 接口。自然语言查询，即问即答。</p>
-                        <div class="project-tech">
-                            <span class="tech-item">Python</span>
-                            <span class="tech-item">Tushare</span>
-                            <span class="tech-item">API</span>
-                        </div>
-                        <a href="#" class="project-link">
-                            VIEW PROJECT <span>→</span>
-                        </a>
+                    <div class="proj-body">
+                        <div class="proj-tags"><span>Finance</span><span>Data</span><span>Plugin</span></div>
+                        <h3 class="proj-name">Finance Data Plugin</h3>
+                        <p class="proj-desc">金融数据检索插件，覆盖 A股/港股/美股、指数、基金、宏观等 209 个 API 接口。自然语言查询即答。</p>
+                        <div class="proj-stack"><i>Python</i><i>Tushare</i><i>API</i></div>
+                        <a href="#" class="proj-link">VIEW PROJECT <span>→</span></a>
                     </div>
                 </article>
             </div>
         </section>
 
-        <!-- 设计作品 -->
-        <section id="design" class="section design">
-            <div class="section-header">
-                <div class="section-label">
-                    <span class="label-index">02</span>
-                    <span class="label-line"></span>
+        <!-- ===== SECTION: OPEN SOURCE ===== -->
+        <section id="open-source" class="sect oss-sect">
+            <div class="sect-head reveal">
+                <div class="sh-top">
+                    <span class="sh-num">02</span>
+                    <span class="sh-rule"></span>
                 </div>
-                <h2 class="section-title">DESIGN // 设计</h2>
-                <p class="section-desc">视觉设计与交互体验</p>
+                <h2 class="sh-title">OPEN SOURCE // 开源</h2>
+                <p class="sh-desc">构建工具，回馈社区</p>
             </div>
-            <div class="design-showcase">
-                <div class="design-item design-item-featured" data-parallax="1.3">
-                    <div class="design-frame">
-                        <div class="design-content">
-                            <div class="design-visual" style="background: linear-gradient(135deg, #0a0f1a 0%, #1a1a2e 50%, #0a0f1a 100%);">
-                                <div class="design-mockup">
-                                    <div class="mockup-screen">
-                                        <div class="mockup-header">
-                                            <span class="mockup-dot"></span>
-                                            <span class="mockup-dot"></span>
-                                            <span class="mockup-dot"></span>
-                                        </div>
-                                        <div class="mockup-body">
-                                            <div class="mockup-sidebar"></div>
-                                            <div class="mockup-main">
-                                                <div class="mockup-card"></div>
-                                                <div class="mockup-card"></div>
-                                                <div class="mockup-row">
-                                                    <div class="mockup-cell"></div>
-                                                    <div class="mockup-cell"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="design-info">
-                                <h3 class="design-name">LobsterLauncher UI</h3>
-                                <p class="design-desc">科技感暗色桌面应用界面设计。Glassmorphism + 霓虹点缀，服务于 AI 工具管理场景。</p>
-                                <div class="design-tags">
-                                    <span>UI Design</span>
-                                    <span>Dark Theme</span>
-                                    <span>Desktop App</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="design-grid">
-                    <div class="design-item" data-parallax="0.7">
-                        <div class="design-frame">
-                            <div class="design-visual" style="background: linear-gradient(135deg, #1a0a1a 0%, #2e1a2e 100%);">
-                                <div class="design-abstract">
-                                    <div class="abs-line"></div>
-                                    <div class="abs-line"></div>
-                                    <div class="abs-circle"></div>
-                                </div>
-                            </div>
-                            <div class="design-info">
-                                <h3 class="design-name">Wiki System</h3>
-                                <p class="design-desc">知识库界面与交互设计</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="design-item" data-parallax="1.1">
-                        <div class="design-frame">
-                            <div class="design-visual" style="background: linear-gradient(135deg, #0a1a1a 0%, #1a2e2e 100%);">
-                                <div class="design-abstract">
-                                    <div class="abs-grid"></div>
-                                    <div class="abs-node"></div>
-                                    <div class="abs-node"></div>
-                                    <div class="abs-node"></div>
-                                </div>
-                            </div>
-                            <div class="design-info">
-                                <h3 class="design-name">Knowledge Graph</h3>
-                                <p class="design-desc">知识图谱可视化设计</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- 开源项目 -->
-        <section id="open-source" class="section open-source">
-            <div class="section-header">
-                <div class="section-label">
-                    <span class="label-index">03</span>
-                    <span class="label-line"></span>
-                </div>
-                <h2 class="section-title">OPEN SOURCE // 开源</h2>
-                <p class="section-desc">构建工具，回馈社区</p>
-            </div>
             <div class="oss-grid">
-                <a href="https://github.com/mornikar/Harness_Multi-Agent_AI_PM" target="_blank" class="oss-card" data-parallax="0.8">
-                    <div class="oss-header">
-                        <div class="oss-icon">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                        </div>
-                        <div class="oss-stats">
-                            <span class="oss-stat">⭐ 12</span>
-                            <span class="oss-stat">🍴 3</span>
-                        </div>
+                <a href="https://github.com/mornikar/Harness_Multi-Agent_AI_PM" target="_blank" class="oss-card reveal">
+                    <div class="oss-top">
+                        <svg class="oss-gh" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        <div class="oss-stats"><span>★ 12</span><span>♦ 3</span></div>
                     </div>
                     <h3 class="oss-name">Harness_Multi-Agent_AI_PM</h3>
-                    <p class="oss-desc">AI PM Skills v3.1 Ironforge — 多 Agent 协作开发框架</p>
-                    <div class="oss-lang">
-                        <span class="lang-dot" style="background:#3178c6"></span>
-                        <span>TypeScript</span>
-                    </div>
+                    <p class="oss-blurb">AI PM Skills v3.1 Ironforge — 多 Agent 协作开发框架</p>
+                    <div class="oss-lang"><span class="lang-dot ts"></span>TypeScript</div>
                 </a>
 
-                <a href="https://github.com/mornikar/mornikar.github.io" target="_blank" class="oss-card" data-parallax="1.0">
-                    <div class="oss-header">
-                        <div class="oss-icon">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                        </div>
-                        <div class="oss-stats">
-                            <span class="oss-stat">⭐ 8</span>
-                            <span class="oss-stat">🍴 2</span>
-                        </div>
+                <a href="https://github.com/mornikar/mornikar.github.io" target="_blank" class="oss-card reveal">
+                    <div class="oss-top">
+                        <svg class="oss-gh" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        <div class="oss-stats"><span>★ 8</span><span>♦ 2</span></div>
                     </div>
                     <h3 class="oss-name">mornikar.github.io</h3>
-                    <p class="oss-desc">Hexo 博客 + Wiki 自生长知识库</p>
-                    <div class="oss-lang">
-                        <span class="lang-dot" style="background:#e34c26"></span>
-                        <span>HTML</span>
-                    </div>
+                    <p class="oss-blurb">Hexo 博客 + Wiki 自生长知识库</p>
+                    <div class="oss-lang"><span class="lang-dot html"></span>HTML</div>
                 </a>
 
-                <a href="https://github.com/mornikar/OpenClaw_Launcher_LobsterLauncher" target="_blank" class="oss-card" data-parallax="0.9">
-                    <div class="oss-header">
-                        <div class="oss-icon">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-                        </div>
-                        <div class="oss-stats">
-                            <span class="oss-stat">⭐ 6</span>
-                            <span class="oss-stat">🍴 1</span>
-                        </div>
+                <a href="https://github.com/mornikar/OpenClaw_Launcher_LobsterLauncher" target="_blank" class="oss-card reveal">
+                    <div class="oss-top">
+                        <svg class="oss-gh" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        <div class="oss-stats"><span>★ 6</span><span>♦ 1</span></div>
                     </div>
                     <h3 class="oss-name">LobsterLauncher</h3>
-                    <p class="oss-desc">OpenClaw 桌面启动器</p>
-                    <div class="oss-lang">
-                        <span class="lang-dot" style="background:#3178c6"></span>
-                        <span>TypeScript</span>
-                    </div>
+                    <p class="oss-blurb">OpenClaw 桌面启动器</p>
+                    <div class="oss-lang"><span class="lang-dot ts"></span>TypeScript</div>
                 </a>
             </div>
         </section>
 
-        <!-- 关于 -->
-        <section id="about" class="section about">
-            <div class="section-header">
-                <div class="section-label">
-                    <span class="label-index">04</span>
-                    <span class="label-line"></span>
+        <!-- ===== SECTION: ABOUT / TERMINAL ===== -->
+        <section id="about" class="sect about-sect">
+            <div class="sect-head reveal">
+                <div class="sh-top">
+                    <span class="sh-num">03</span>
+                    <span class="sh-rule"></span>
                 </div>
-                <h2 class="section-title">PROFILE // 关于</h2>
+                <h2 class="sh-title">PROFILE // 关于</h2>
             </div>
-            <div class="about-content">
-                <div class="about-terminal" data-parallax="0.6">
-                    <div class="terminal-header">
-                        <span class="terminal-btn"></span>
-                        <span class="terminal-btn"></span>
-                        <span class="terminal-btn"></span>
-                        <span class="terminal-title">mornikar@portfolio ~ </span>
+
+            <div class="term-wrap reveal">
+                <div class="term">
+                    <div class="term-bar">
+                        <span class="term-btn b-r"></span>
+                        <span class="term-btn b-y"></span>
+                        <span class="term-btn b-g"></span>
+                        <span class="term-ttl">mornikar@portfolio ~ /dev/tty</span>
                     </div>
-                    <div class="terminal-body">
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">$</span>
-                            <span class="terminal-cmd">whoami</span>
-                        </div>
-                        <div class="terminal-output">
-                            <p>mornikar — 全栈开发者 / AI 产品架构师 / 视觉设计师</p>
+                    <div class="term-out">
+                        <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd">whoami</span></div>
+                        <div class="t-block">
+                           <p>mornikar — 全栈开发者 / AI 产品架构师 / 视觉设计师</p>
                             <p>坐标：广州</p>
-                            <p>专注：AI 产品工程化、自生长知识库、开发者工具</p>
+                            <p>专注：AI 产品工程化 · 自生长知识库 · 开发者工具</p>
                         </div>
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">$</span>
-                            <span class="terminal-cmd">cat skills.txt</span>
+                        <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd">cat skills.txt</span></div>
+                        <div class="t-block">
+                            <div class="skill-row"><span class="skill-k">Full-Stack Dev</span><div class="skill-bar"><div class="skill-fill" data-w="90"></div></div></div>
+                            <div class="skill-row"><span class="skill-k">AI Architecture</span><div class="skill-bar"><div class="skill-fill" data-w="85"></div></div></div>
+                            <div class="skill-row"><span class="skill-k">UI / UX Design</span><div class="skill-bar"><div class="skill-fill" data-w="80"></div></div></div>
+                            <div class="skill-row"><span class="skill-k">Open Source</span><div class="skill-bar"><div class="skill-fill" data-w="75"></div></div></div>
                         </div>
-                        <div class="terminal-output">
-                            <div class="skill-bar">
-                                <span class="skill-name">Full-Stack Dev</span>
-                                <div class="skill-track"><div class="skill-fill" style="width:90%"></div></div>
-                            </div>
-                            <div class="skill-bar">
-                                <span class="skill-name">AI Architecture</span>
-                                <div class="skill-track"><div class="skill-fill" style="width:85%"></div></div>
-                            </div>
-                            <div class="skill-bar">
-                                <span class="skill-name">UI/UX Design</span>
-                                <div class="skill-track"><div class="skill-fill" style="width:80%"></div></div>
-                            </div>
-                            <div class="skill-bar">
-                                <span class="skill-name">Open Source</span>
-                                <div class="skill-track"><div class="skill-fill" style="width:75%"></div></div>
-                            </div>
+                        <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd">contact --list</span></div>
+                        <div class="t-block">
+                            <p>GitHub : <a href="https://github.com/mornikar" target="_blank">github.com/mornikar</a></p>
+                            <p>Blog   : <a href="https://mornikar.github.io" target="_blank">mornikar.github.io</a></p>
                         </div>
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">$</span>
-                            <span class="terminal-cmd">contact --list</span>
-                        </div>
-                        <div class="terminal-output">
-                            <p>GitHub: github.com/mornikar</p>
-                            <p>Blog: mornikar.github.io</p>
-                            <p>Email: [your-email@example.com]</p>
-                        </div>
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">$</span>
-                            <span class="terminal-cursor">_</span>
-                        </div>
+                        <div class="t-line"><span class="t-prompt">$</span><span class="t-cur">_</span></div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <span class="footer-logo">MORNIKAR</span>
-                    <span class="footer-version">v3.0.0</span>
-                </div>
-                <div class="footer-links">
-                    <a href="https://github.com/mornikar" target="_blank">GitHub</a>
-                    <a href="https://mornikar.github.io" target="_blank">Blog</a>
-                </div>
-                <div class="footer-copy">
-                    <span>© 2026 MORNIKAR. ALL SYSTEMS OPERATIONAL.</span>
-                </div>
-            </div>
-        </footer>
     </main>
 
-    <script src="js/parallax.js"></script>
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="foot">
+        <div class="foot-inner">
+            <div class="foot-left">
+                <span class="foot-logo">MORNIKAR</span>
+                <span class="foot-ver">v4.0</span>
+            </div>
+            <div class="foot-mid">
+                <a href="https://github.com/mornikar" target="_blank">GitHub</a>
+                <a href="https://mornikar.github.io" target="_blank">Blog</a>
+            </div>
+            <div class="foot-right">
+                <span>© 2026 — ALL SYSTEMS OPERATIONAL</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script src="js/particles.js"></script>
+    <script src="js/parallax.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

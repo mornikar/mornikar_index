@@ -1,269 +1,224 @@
 /**
- * MORNIKAR PORTFOLIO — MAIN INTERACTIONS
- * Loader, typewriter, scroll animations, nav, counters
+ * MORNIKAR PORTFOLIO v4.0 — MAIN INTERACTIONS
+ * Loader · Typewriter · Scroll Reveal · Nav · Counters · Skill Bars · Glitch
  */
 
-(function() {
+(function () {
     'use strict';
 
-    // ============================================
+    // ========================================
     // LOADER
-    // ============================================
+    // ========================================
     const loader = document.getElementById('loader');
-    const loaderProgress = document.querySelector('.loader-progress');
-    const loaderPercent = document.querySelector('.loader-percent');
-    const loaderStatus = document.querySelector('.loader-status');
+    const loaderFill = loader ? loader.querySelector('.loader-fill') : null;
+    const loaderPct = loader ? loader.querySelector('.loader-pct') : null;
+    const loaderStatus = loader ? loader.querySelector('.loader-status') : null;
 
     function runLoader() {
+        if (!loader) { initAfterLoad(); return; }
+
         let progress = 0;
         const stages = [
-            { at: 0, text: 'INITIALIZING' },
-            { at: 30, text: 'LOADING ASSETS' },
-            { at: 60, text: 'RENDERING LAYERS' },
-            { at: 85, text: 'FINALIZING' },
+            { at: 0, text: 'INITIALIZING SYSTEM' },
+            { at: 25, text: 'LOADING ASSETS' },
+            { at: 55, text: 'RENDERING LAYERS' },
+            { at: 80, text: 'COMPILING SHADERS' },
+            { at: 95, text: 'FINALIZING' }
         ];
 
-        const interval = setInterval(() => {
-            progress += Math.random() * 8 + 2;
+        const tick = setInterval(() => {
+            progress += Math.random() * 7 + 2.5;
             if (progress > 100) progress = 100;
 
-            loaderProgress.style.width = progress + '%';
-            loaderPercent.textContent = Math.floor(progress) + '%';
+            if (loaderFill) loaderFill.style.width = progress + '%';
+            if (loaderPct) loaderPct.textContent = Math.floor(progress) + '%';
 
             const stage = stages.slice().reverse().find(s => progress >= s.at);
-            if (stage) loaderStatus.textContent = stage.text;
+            if (stage && loaderStatus) loaderStatus.textContent = stage.text;
 
             if (progress >= 100) {
-                clearInterval(interval);
+                clearInterval(tick);
                 setTimeout(() => {
-                    loader.classList.add('hidden');
-                    initAnimations();
-                }, 500);
+                    loader.classList.add('out');
+                    initAfterLoad();
+                }, 550);
             }
-        }, 80);
+        }, 70);
     }
 
-    // ============================================
-    // TYPEWRITER EFFECT
-    // ============================================
-    function typewriter(element, text, speed = 60) {
+    // ========================================
+    // TYPEWRITER
+    // ========================================
+    function typewriter(el, speed) {
+        const text = el.dataset.text || el.textContent || '';
+        if (!text || !el) return;
         let i = 0;
-        element.textContent = '';
-        element.style.opacity = '1';
+        el.textContent = '';
+        el.style.opacity = '1';
 
-        function type() {
+        function next() {
             if (i < text.length) {
-                element.textContent += text.charAt(i);
+                el.textContent += text.charAt(i);
                 i++;
-                setTimeout(type, speed);
+                setTimeout(next, speed || 55 + Math.random() * 30);
             }
         }
-
-        setTimeout(type, 2200);
+        setTimeout(next, 2100);
     }
 
-    // ============================================
-    // SCROLL REVEAL
-    // ============================================
+    // ========================================
+    // SCROLL REVEAL (IntersectionObserver)
+    // ========================================
     function initScrollReveal() {
-        const revealElements = document.querySelectorAll(
-            '.project-card, .design-item, .oss-card, .about-terminal, .section-header'
-        );
-
-        revealElements.forEach(el => el.classList.add('reveal'));
-
-        const observer = new IntersectionObserver((entries) => {
+        const elements = document.querySelectorAll('.reveal');
+        const obs = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    // Counter animation for stats
-                    const counters = entry.target.querySelectorAll('[data-count]');
-                    counters.forEach(counter => animateCounter(counter));
+                    entry.target.classList.add('vis');
+                    // Trigger counters within this element
+                    entry.target.querySelectorAll('[data-count]').forEach(c => animateCounter(c));
+                    // Trigger skill bars within this element
+                    entry.target.querySelectorAll('.skill-fill[data-w]').forEach(s => animateSkillBar(s));
+                    obs.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        }, { threshold: .08, rootMargin: '0px 0px -40px 0px' });
 
-        revealElements.forEach(el => observer.observe(el));
+        elements.forEach(el => obs.observe(el));
     }
 
-    // ============================================
+    // ========================================
     // COUNTER ANIMATION
-    // ============================================
-    function animateCounter(element) {
-        if (element.dataset.animated) return;
-        element.dataset.animated = 'true';
-
-        const target = parseInt(element.dataset.count);
-        const duration = 1500;
+    // ========================================
+    function animateCounter(el) {
+        if (el.dataset.animated) return;
+        el.dataset.animated = '1';
+        const target = parseInt(el.dataset.count, 10);
+        const dur = 1400;
         const start = performance.now();
-        const startValue = 0;
 
-        function update(currentTime) {
-            const elapsed = currentTime - start;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            const current = Math.floor(startValue + (target - startValue) * eased);
-
-            element.textContent = current.toString().padStart(2, '0');
-
-            if (progress < 1) {
-                requestAnimationFrame(update);
-            } else {
-                element.textContent = target.toString().padStart(2, '0');
-            }
+        function frame(now) {
+            const p = Math.min((now - start) / dur, 1);
+            const ease = 1 - Math.pow(1 - p, 3);
+            el.textContent = String(Math.floor(target * ease)).padStart(2, '0');
+            if (p < 1) requestAnimationFrame(frame);
+            else el.textContent = String(target).padStart(2, '0');
         }
-
-        requestAnimationFrame(update);
+        requestAnimationFrame(frame);
     }
 
-    // ============================================
+    // ========================================
+    // SKILL BAR ANIMATION
+    // ========================================
+    function animateSkillBar(el) {
+        if (el.dataset.filled) return;
+        el.dataset.filled = '1';
+        const w = el.dataset.w || '0';
+        el.style.transition = 'none';
+        el.style.width = '0%';
+        // Force reflow
+        void el.offsetWidth;
+        el.style.transition = 'width 1.4s cubic-bezier(.16,1,.3,1)';
+        el.style.width = w + '%';
+    }
+
+    // Also trigger skill bars in terminal on scroll
+    function initSkillBars() {
+        const term = document.querySelector('.term-out');
+        if (!term) return;
+        const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.querySelectorAll('.skill-fill[data-w]').forEach(s => animateSkillBar(s));
+                    obs.unobserve(e.target);
+                }
+            });
+        }, { threshold: .3 });
+        obs.observe(term);
+    }
+
+    // ========================================
     // NAVIGATION
-    // ============================================
+    // ========================================
     function initNav() {
         const nav = document.getElementById('nav');
-        const sections = document.querySelectorAll('.section');
-        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.sect');
+        const links = document.querySelectorAll('.nav-item');
 
-        // Show/hide nav on scroll
-        let lastScroll = 0;
         window.addEventListener('scroll', () => {
-            const currentScroll = window.scrollY;
+            const sy = window.scrollY;
+            nav.classList.toggle('show', sy > 120);
 
-            if (currentScroll > 100) {
-                nav.classList.add('visible');
-            } else {
-                nav.classList.remove('visible');
-            }
-
-            // Active section highlight
-            sections.forEach(section => {
-                const rect = section.getBoundingClientRect();
-                if (rect.top <= 200 && rect.bottom > 200) {
-                    const id = section.id;
-                    navLinks.forEach(link => {
-                        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
-                    });
+            sections.forEach(s => {
+                const r = s.getBoundingClientRect();
+                if (r.top <= 180 && r.bottom > 180) {
+                    const id = s.id;
+                    links.forEach(l => l.classList.toggle('active', l.dataset.section === id));
                 }
             });
-
-            lastScroll = currentScroll;
         }, { passive: true });
 
-        // Smooth scroll for nav links
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
+        links.forEach(link => {
+            link.addEventListener('click', e => {
                 e.preventDefault();
-                const target = document.querySelector(link.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                const t = document.querySelector(link.getAttribute('href'));
+                if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         });
     }
 
-    // ============================================
-    // PARALLAX CARDS
-    // ============================================
-    function initParallaxCards() {
-        const cards = document.querySelectorAll('[data-parallax]');
-
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-
-            cards.forEach(card => {
-                const speed = parseFloat(card.dataset.parallax) || 1;
-                const rect = card.getBoundingClientRect();
-                const centerY = rect.top + rect.height / 2;
-                const viewportCenter = window.innerHeight / 2;
-                const offset = (centerY - viewportCenter) * 0.02 * speed;
-
-                card.style.transform = `translateY(${offset}px)`;
-            });
-        }, { passive: true });
-    }
-
-    // ============================================
-    // GLITCH EFFECT
-    // ============================================
+    // ========================================
+    // GLITCH EFFECT ON PROJECT CARDS
+    // ========================================
     function initGlitch() {
-        const glitches = document.querySelectorAll('.project-glitch');
-
-        glitches.forEach(el => {
-            const originalText = el.dataset.text || el.textContent;
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
-            function glitch() {
-                let iterations = 0;
-                const maxIterations = 10;
-
-                const interval = setInterval(() => {
-                    el.textContent = originalText
-                        .split('')
-                        .map((char, i) => {
-                            if (i < iterations) return originalText[i];
-                            return chars[Math.floor(Math.random() * chars.length)];
-                        })
-                        .join('');
-
-                    iterations += 1 / 3;
-                    if (iterations >= maxIterations) {
-                        clearInterval(interval);
-                        el.textContent = originalText;
-                    }
-                }, 50);
-            }
-
-            // Trigger on hover
-            el.closest('.project-card').addEventListener('mouseenter', glitch);
+        document.querySelectorAll('.proj-card').forEach(card => {
+            const wm = card.querySelector('.proj-watermark');
+            if (!wm) return;
+            card.addEventListener('mouseenter', () => {
+                wm.style.animation = 'none';
+                void wm.offsetWidth; // force reflow
+                wm.style.animation = '';
+            });
         });
     }
 
-    // ============================================
-    // SKILL BAR ANIMATION
-    // ============================================
-    function initSkillBars() {
-        const skillBars = document.querySelectorAll('.skill-fill');
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const bar = entry.target;
-                    const width = bar.style.width;
-                    bar.style.width = '0%';
-                    setTimeout(() => {
-                        bar.style.width = width;
-                    }, 100);
-                    observer.unobserve(bar);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        skillBars.forEach(bar => observer.observe(bar));
+    // ========================================
+    // TERMINAL CURSOR BLINK
+    // ========================================
+    function initTerminalCursor() {
+        const cur = document.querySelector('.t-cur');
+        if (!cur) return;
+        setInterval(() => {
+            cur.style.visibility = cur.style.visibility === 'hidden' ? '' : 'hidden';
+        }, 530);
     }
 
-    // ============================================
-    // INITIALIZE ALL
-    // ============================================
-    function initAnimations() {
+    // ========================================
+    // INIT ALL AFTER LOADER
+    // ========================================
+    function initAfterLoad() {
         // Typewriter
-        const typewriterEl = document.querySelector('.typewriter');
-        if (typewriterEl) {
-            typewriter(typewriterEl, typewriterEl.dataset.text || '');
-        }
+        const typeEl = document.querySelector('.hero-type');
+        if (typeEl) typewriter(typeEl);
 
+        // Systems
         initScrollReveal();
         initNav();
-        initParallaxCards();
-        initGlitch();
         initSkillBars();
+        initGlitch();
+        initTerminalCursor();
 
-        // Animate hero stats on load
-        document.querySelectorAll('.hero-stats .stat-num').forEach(counter => {
-            animateCounter(counter);
-        });
+        // Hero counters immediate animation
+        document.querySelectorAll('.hero-stats-grid [data-count]').forEach(c => animateCounter(c));
+
+        // Hero terminal cursor blink
+        const htCur = document.querySelector('.ht-cursor');
+        if (htCur) {
+            setInterval(() => { htCur.style.opacity = htCur.style.opacity === '0' ? '1' : '0'; }, 530);
+        }
     }
 
-    // Start
+    // ---- Start ----
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', runLoader);
     } else {
