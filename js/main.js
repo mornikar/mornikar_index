@@ -1,6 +1,6 @@
 /**
- * MORNIKAR PORTFOLIO v4.0 — MAIN INTERACTIONS
- * Loader · Typewriter · Scroll Reveal · Nav · Counters · Skill Bars · Glitch
+ * MORNIKAR PORTFOLIO v4.1 — MAIN INTERACTIONS
+ * Loader · Typewriter · Scroll Reveal · Nav · Counters · Skill Bars
  */
 
 (function () {
@@ -67,7 +67,7 @@
     }
 
     // ========================================
-    // SCROLL REVEAL (IntersectionObserver)
+    // SCROLL REVEAL
     // ========================================
     function initScrollReveal() {
         const elements = document.querySelectorAll('.reveal');
@@ -75,9 +75,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('vis');
-                    // Trigger counters within this element
                     entry.target.querySelectorAll('[data-count]').forEach(c => animateCounter(c));
-                    // Trigger skill bars within this element
                     entry.target.querySelectorAll('.skill-fill[data-w]').forEach(s => animateSkillBar(s));
                     obs.unobserve(entry.target);
                 }
@@ -116,13 +114,11 @@
         const w = el.dataset.w || '0';
         el.style.transition = 'none';
         el.style.width = '0%';
-        // Force reflow
         void el.offsetWidth;
         el.style.transition = 'width 1.4s cubic-bezier(.16,1,.3,1)';
         el.style.width = w + '%';
     }
 
-    // Also trigger skill bars in terminal on scroll
     function initSkillBars() {
         const term = document.querySelector('.term-out');
         if (!term) return;
@@ -168,7 +164,7 @@
     }
 
     // ========================================
-    // GLITCH EFFECT ON PROJECT CARDS
+    // GLITCH EFFECT
     // ========================================
     function initGlitch() {
         document.querySelectorAll('.proj-card').forEach(card => {
@@ -176,42 +172,26 @@
             if (!wm) return;
             card.addEventListener('mouseenter', () => {
                 wm.style.animation = 'none';
-                void wm.offsetWidth; // force reflow
+                void wm.offsetWidth;
                 wm.style.animation = '';
             });
         });
     }
 
     // ========================================
-    // TERMINAL CURSOR BLINK
-    // ========================================
-    function initTerminalCursor() {
-        const cur = document.querySelector('.t-cur');
-        if (!cur) return;
-        setInterval(() => {
-            cur.style.visibility = cur.style.visibility === 'hidden' ? '' : 'hidden';
-        }, 530);
-    }
-
-    // ========================================
     // INIT ALL AFTER LOADER
     // ========================================
     function initAfterLoad() {
-        // Typewriter
         const typeEl = document.querySelector('.hero-type');
         if (typeEl) typewriter(typeEl);
 
-        // Systems
         initScrollReveal();
         initNav();
         initSkillBars();
         initGlitch();
-        initTerminalCursor();
 
-        // Hero counters immediate animation
         document.querySelectorAll('.hero-stats-grid [data-count]').forEach(c => animateCounter(c));
 
-        // Hero terminal cursor blink
         const htCur = document.querySelector('.ht-cursor');
         if (htCur) {
             setInterval(() => { htCur.style.opacity = htCur.style.opacity === '0' ? '1' : '0'; }, 530);
