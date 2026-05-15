@@ -239,4 +239,14 @@ href: 'https://github.com/mornikar'
 1. 不要恢复 `.mornikar-profile-card-*` 旧样式，那一版会偏离 React Bits 原版。
 2. 不要给 `.avatar` 额外加 `height/object-fit/object-position` 覆盖，头像展示应尽量交给 React Bits 原版 `.pc-avatar-content .avatar` 控制。
 3. 页面定位可以改 `.mornikar-profile-grid--feature`，尺寸可以改 `.pc-card-wrapper--feature` 和 `.pc-card-wrapper--feature .pc-card`，但不要改 `pc-*` 的核心视觉样式。
-4. `server.js` 注入使用 `/profile-cards.css?v=reactbits-original` 和 `/profile-cards.js?v=reactbits-original`，修改后需要重启 `start.bat` 才能稳定避开旧缓存。
+4. `server.js` 注入使用带版本号的 `/profile-cards.css` 和 `/profile-cards.js`，修改后需要重启 `start.bat` 才能稳定避开旧缓存。
+
+## 2026-05-15 资料卡缩小与 hero 过场
+
+本次调整：
+
+1. 大资料卡从 `scale(1.5)` 改成 `scale(0.75)`，也就是按用户反馈在当前视觉尺寸上再等比缩小 1/2。
+2. 大资料卡优先挂载到 `.homeProjectIntro__hero`，而不是直接挂到 `.block--bottomleft.block`。如果这个节点不存在，才回退到旧挂载点。
+3. `profile-cards.js` 通过 `syncFeatureCardWithHero()` 读取 `.homeProjectIntro__hero` 的视口位置和 `.homeProjectIntro` 的 opacity，写入 CSS 变量 `--mornikar-hero-progress`，让资料卡跟随 hero 框淡入、轻微上移进入，并在离开时淡出。
+4. React Bits 的 `pc-shine` 原版 CSS 本来就有彩色镭射层，但它需要 `iconUrl` 做遮罩。如果 `iconUrl` 为空并写成 `--icon: none`，镭射层会满铺整张卡，看起来像五颜六色的光污染。当前用 `/images/newImage/profile-card-icon-pattern.svg` 作为本地遮罩，保留原版机制，同时避免满屏彩色层。
+5. 注入缓存版本号更新为 `reactbits-hero-mask`，修改后需要重启服务，浏览器才会拿到新 CSS/JS。

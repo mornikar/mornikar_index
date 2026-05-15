@@ -1,4 +1,6 @@
 (function () {
+  var DEFAULT_ICON_URL = '/images/newImage/profile-card-icon-pattern.svg';
+
   var profileCard = {
     name: 'GT/罗锦涛',
     title: 'AI产品经理',
@@ -7,7 +9,7 @@
     contactText: '联系',
     avatarUrl: '/images/newImage/gt-avatar-cutout.png',
     miniAvatarUrl: '/images/newImage/gt-avatar-cutout.png',
-    iconUrl: '',
+    iconUrl: DEFAULT_ICON_URL,
     grainUrl: '',
     innerGradient: 'linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)',
     behindGlowEnabled: true,
@@ -131,7 +133,8 @@
 
   function makeProfileCard(data, variant) {
     var wrapper = createElement('div', 'pc-card-wrapper pc-card-wrapper--' + variant);
-    wrapper.style.setProperty('--icon', data.iconUrl ? 'url(' + data.iconUrl + ')' : 'none');
+    var iconUrl = data.iconUrl === '' ? '' : (data.iconUrl || DEFAULT_ICON_URL);
+    wrapper.style.setProperty('--icon', iconUrl ? 'url(' + iconUrl + ')' : 'none');
     wrapper.style.setProperty('--grain', data.grainUrl ? 'url(' + data.grainUrl + ')' : 'none');
     wrapper.style.setProperty('--inner-gradient', data.innerGradient || 'linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)');
     wrapper.style.setProperty('--behind-glow-color', data.behindGlowColor || 'rgba(125, 190, 255, 0.67)');
@@ -207,7 +210,8 @@
   }
 
   function findMainTarget() {
-    return document.querySelector('.homeProjectIntro .block--bottomleft.block') ||
+    return document.querySelector('.homeProjectIntro__hero') ||
+      document.querySelector('.homeProjectIntro .block--bottomleft.block') ||
       document.querySelector('.block--bottomleft.block');
   }
 
@@ -223,24 +227,59 @@
   }
 
   function removeOldBlockGrid(target) {
-    var grids = target.querySelectorAll('.mornikar-profile-grid');
+    var root = document.querySelector('.homeProjectIntro') || target;
+    var grids = root.querySelectorAll('.mornikar-profile-grid--feature');
     for (var i = 0; i < grids.length; i += 1) {
-      if (!grids[i].classList.contains('mornikar-profile-grid--feature')) {
+      if (grids[i].parentNode !== target) {
         grids[i].parentNode.removeChild(grids[i]);
       }
     }
+  }
+
+  function syncFeatureCardWithHero(grid) {
+    if (grid.dataset.mornikarHeroTransitionSynced === 'true') return;
+    grid.dataset.mornikarHeroTransitionSynced = 'true';
+
+    var hero = document.querySelector('.homeProjectIntro__hero') || grid.parentNode;
+    var section = document.querySelector('.homeProjectIntro');
+
+    function frame() {
+      if (!document.documentElement.contains(grid)) return;
+
+      var rect = hero.getBoundingClientRect();
+      var vh = window.innerHeight || document.documentElement.clientHeight || 1;
+      var sectionOpacity = section ? parseFloat(window.getComputedStyle(section).opacity) : 1;
+      if (!isFinite(sectionOpacity)) sectionOpacity = 1;
+
+      var center = rect.top + rect.height / 2;
+      var distance = Math.abs(center - vh * 0.55);
+      var raw = 1 - clamp(distance / (vh * 0.75), 0, 1);
+      var visible = rect.bottom > 0 && rect.top < vh && sectionOpacity > 0.02;
+      var progress = visible ? Math.max(0, raw * sectionOpacity) : 0;
+
+      grid.style.setProperty('--mornikar-hero-progress', progress.toFixed(3));
+      grid.classList.toggle('mornikar-profile-grid--hero-active', progress > 0.12);
+      window.requestAnimationFrame(frame);
+    }
+
+    window.requestAnimationFrame(frame);
   }
 
   function mountFeatureCard() {
     var target = findMainTarget();
     if (!target) return false;
     removeOldBlockGrid(target);
-    if (target.querySelector('.mornikar-profile-grid--feature')) return true;
+    var existing = target.querySelector('.mornikar-profile-grid--feature');
+    if (existing) {
+      syncFeatureCardWithHero(existing);
+      return true;
+    }
 
     target.style.pointerEvents = 'auto';
     var grid = createElement('div', 'mornikar-profile-grid mornikar-profile-grid--feature');
     grid.appendChild(makeProfileCard(profileCard, 'feature'));
     target.appendChild(grid);
+    syncFeatureCardWithHero(grid);
     console.log('[profile-cards] React Bits feature ProfileCard mounted');
     return true;
   }

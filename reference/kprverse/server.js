@@ -342,7 +342,7 @@ function serveLocal(urlPath, res) {
       }
     } catch(e) {}
 
-    const profileCardsInject = '<link rel="stylesheet" href="/profile-cards.css?v=reactbits-original"><script>(function(){function loadProfileCards(){setTimeout(function(){if(document.querySelector("script[data-mornikar-profile-cards]"))return;var s=document.createElement("script");s.src="/profile-cards.js?v=reactbits-original";s.defer=true;s.dataset.mornikarProfileCards="true";document.body.appendChild(s);},3000)}if(document.readyState==="complete"){loadProfileCards()}else{window.addEventListener("load",loadProfileCards,{once:true})}})();</script>';
+    const profileCardsInject = '<link rel="stylesheet" href="/profile-cards.css?v=reactbits-hero-mask"><script>(function(){function loadProfileCards(){setTimeout(function(){if(document.querySelector("script[data-mornikar-profile-cards]"))return;var s=document.createElement("script");s.src="/profile-cards.js?v=reactbits-hero-mask";s.defer=true;s.dataset.mornikarProfileCards="true";document.body.appendChild(s);},3000)}if(document.readyState==="complete"){loadProfileCards()}else{window.addEventListener("load",loadProfileCards,{once:true})}})();</script>';
 
     const inject = `<script>
 // KPR-PROXY: Rewrite S3 font URLs to local proxy to avoid CORS
