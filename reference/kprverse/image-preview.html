@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>KPR Verse - 图片与区域对照</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#111; color:#eee; font-family:system-ui; padding:20px; }
+h1 { margin-bottom:20px; color:#fff; }
+h2 { margin:20px 0 10px; color:#8af; border-bottom:1px solid #333; padding-bottom:5px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:15px; }
+.card { background:#222; border-radius:8px; overflow:hidden; border:2px solid #333; }
+.card:hover { border-color:#8af; }
+.card img { width:100%; height:180px; object-fit:cover; display:block; }
+.card .info { padding:8px 12px; }
+.card .info .name { font-weight:bold; font-size:14px; }
+.card .info .dims { color:#aaa; font-size:12px; }
+.card .info .assign { color:#8f8; font-size:12px; margin-top:4px; font-weight:bold; }
+.section { background:#1a1a2e; border:1px solid #333; border-radius:8px; padding:15px; margin:10px 0; }
+.section h3 { color:#f8a; margin-bottom:8px; }
+.section .desc { color:#aaa; font-size:13px; margin-bottom:5px; }
+.section .selector { color:#8af; font-size:12px; font-family:monospace; }
+.legend { background:#1a1a2e; padding:15px; border-radius:8px; margin-bottom:20px; }
+.legend table { width:100%; border-collapse:collapse; }
+.legend td, .legend th { padding:5px 10px; text-align:left; border-bottom:1px solid #333; font-size:13px; }
+.legend th { color:#8af; }
+.assigned { border-color:#4f4 !important; }
+</style>
+</head>
+<body>
+
+<h1>KPR Verse - newImage 图片与页面区域对照表</h1>
+
+<div class="legend">
+<h2>页面区域清单（从上到下）</h2>
+<table>
+<tr><th>#</th><th>区域</th><th>data-ui</th><th>可替换的DOM图片</th><th>图片尺寸建议</th></tr>
+<tr><td>1</td><td>Landing（首页大标题）</td><td>landingRef</td><td>3D WebGL背景（需改Home.js）</td><td>1920x1080</td></tr>
+<tr><td>2</td><td>ProjectIntro（3D翻转卡片）</td><td>projectIntroRef</td><td>✅ 已配 projectIntro.image=02.jpg</td><td>1400x1800</td></tr>
+<tr><td>3</td><td>ProjectIntro img1</td><td>—</td><td>.homeProjectIntro__img1 (trailer-side-media.webp)</td><td>?</td></tr>
+<tr><td>4</td><td>StoryIntro</td><td>—</td><td>无DOM img（3D ktx2纹理）</td><td>—</td></tr>
+<tr><td>5</td><td>CollectionIntro</td><td>—</td><td>.mediaEl (face-traits.webp)</td><td>?</td></tr>
+<tr><td>6</td><td>CollectionGallery</td><td>—</td><td>✅ 已配 gallery.videos (B站视频)</td><td>—</td></tr>
+<tr><td>7</td><td>Keep Tableau</td><td>keepRef</td><td>3D纹理: 10.webp(BG)+11/12/13(卡片)</td><td>1031x1650 / 1256x707</td></tr>
+<tr><td>8</td><td>Factions Tableau</td><td>factionsRef</td><td>3D sprite sheets</td><td>—</td></tr>
+<tr><td>9</td><td>Universe Tableau</td><td>universeRef</td><td>3D sprite sheets</td><td>—</td></tr>
+<tr><td>10</td><td>Launch（底部3卡片）</td><td>launchRef</td><td>3D ktx2纹理（需改Home.js）</td><td>—</td></tr>
+</table>
+</div>
+
+<h2>所有 newImage 图片预览</h2>
+<p style="color:#aaa;margin-bottom:15px">点击图片查看大图。请告诉我每张图应该放在哪个区域。</p>
+
+<div class="grid">
+<div class="card assigned">
+<img src="/images/newImage/01.webp" onerror="this.src='/images/newImage/01.jpg'">
+<div class="info">
+<div class="name">01 (01.jpg/webp)</div>
+<div class="dims">1920x1080 · 590KB</div>
+<div class="assign">→ Landing背景？</div>
+</div>
+</div>
+
+<div class="card assigned">
+<img src="/images/newImage/02.webp" onerror="this.src='/images/newImage/02.jpg'">
+<div class="info">
+<div class="name">02 (02.jpg/webp)</div>
+<div class="dims">1400x1800 · 298KB</div>
+<div class="assign">→ ✅ ProjectIntro（已配）</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/03.webp" onerror="this.src='/images/newImage/03.jpg'">
+<div class="info">
+<div class="name">03 (03.jpg/webp)</div>
+<div class="dims">1920x1080 · 827KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/04.webp" onerror="this.src='/images/newImage/04.jpg'">
+<div class="info">
+<div class="name">04 (04.jpg/webp)</div>
+<div class="dims">2000x1064 · 437KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/05.webp" onerror="this.src='/images/newImage/05.png'">
+<div class="info">
+<div class="name">05 (05.png/webp)</div>
+<div class="dims">1024x576 · 779KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/06.png" onerror="this.src='/images/newImage/06.avif'">
+<div class="info">
+<div class="name">06 (06.avif/png)</div>
+<div class="dims">1024x576 · 588KB(avif)</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/07.png" onerror="this.src='/images/newImage/07.avif'">
+<div class="info">
+<div class="name">07 (07.avif/png)</div>
+<div class="dims">1200x675 · 803KB(png)</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/08.webp" onerror="this.src='/images/newImage/08.jpg'">
+<div class="info">
+<div class="name">08 (08.jpg/webp)</div>
+<div class="dims">2000x1117 · 186KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/09.webp" onerror="this.src='/images/newImage/09.jpg'">
+<div class="info">
+<div class="name">09 (09.jpg/webp)</div>
+<div class="dims">890x499 · 32KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card assigned">
+<img src="/images/newImage/10.webp" onerror="this.src='/images/newImage/10.jpeg'">
+<div class="info">
+<div class="name">10 (10.jpeg/webp)</div>
+<div class="dims">1031x1650 · 101KB</div>
+<div class="assign">→ ✅ Keep BG纹理（Home.js）</div>
+</div>
+</div>
+
+<div class="card assigned">
+<img src="/images/newImage/11.webp" onerror="this.src='/images/newImage/11.jpg'">
+<div class="info">
+<div class="name">11 (11.jpg/webp)</div>
+<div class="dims">1256x707 · 1.4MB</div>
+<div class="assign">→ ✅ Keep 卡片0（Home.js）</div>
+</div>
+</div>
+
+<div class="card assigned">
+<img src="/images/newImage/12.webp">
+<div class="info">
+<div class="name">12 (12.webp)</div>
+<div class="dims">? · 71KB</div>
+<div class="assign">→ ✅ Keep 卡片1（Home.js）</div>
+</div>
+</div>
+
+<div class="card assigned">
+<img src="/images/newImage/13.webp">
+<div class="info">
+<div class="name">13 (13.webp)</div>
+<div class="dims">? · 19KB</div>
+<div class="assign">→ ✅ Keep 卡片2（Home.js）</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/14.webp">
+<div class="info">
+<div class="name">14 (14.webp)</div>
+<div class="dims">1256x707 · 35KB</div>
+<div class="assign">→ ?（与11同尺寸）</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/15.webp">
+<div class="info">
+<div class="name">15 (15.webp)</div>
+<div class="dims">? · 48KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/16.avif">
+<div class="info">
+<div class="name">16 (16.avif)</div>
+<div class="dims">avif · 56KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/17.avif">
+<div class="info">
+<div class="name">17 (17.avif)</div>
+<div class="dims">avif · 47KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/18.avif">
+<div class="info">
+<div class="name">18 (18.avif)</div>
+<div class="dims">avif · 29KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/19.avif">
+<div class="info">
+<div class="name">19 (19.avif)</div>
+<div class="dims">avif · 58KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+
+<div class="card">
+<img src="/images/newImage/20.avif">
+<div class="info">
+<div class="name">20 (20.avif)</div>
+<div class="dims">avif · 43KB</div>
+<div class="assign">→ ?</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

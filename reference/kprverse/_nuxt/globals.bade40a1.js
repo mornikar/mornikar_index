@@ -1,0 +1,1 @@
+import{at as o,aN as a,aO as r}from"./entry.06ae7dd6.js";import{e as l}from"./index.77e4f8bb.js";const e={gsap:o,ScrollTrigger:a,ScrollSmoother:r,uiContainer:null,canvasContainer:null,app:{simpleFrame:{color:0,opacity:0}},copy:null,scrollSmoother:null,lang:"en-us"},n=o=>{Object.entries(o).forEach((([o,a])=>{e[o]=a}))};new l;export{e as g,n as s};

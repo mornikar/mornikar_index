@@ -1,0 +1,1 @@
+import{a,e as s,u as e,o as t,l as o,t as n,A as r,f as p}from"./entry.06ae7dd6.js";const d={key:0,class:"version type-caption2"},i=p(a({__name:"version",setup(a){const{app:p,debug:i}=s();return(a,s)=>e(i).enabled?(t(),o("div",d,"v"+n(e(p).version),1)):r("",!0)}}),[["__scopeId","data-v-9497babd"]]);export{i as default};

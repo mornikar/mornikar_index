@@ -1,0 +1,1 @@
+import{b as o}from"./entry.06ae7dd6.js";function t(t){const{$gsap:e}=o();let n;const c=document.querySelector(t);n=c?document.documentElement.scrollTop+c.getBoundingClientRect().top:0;const s=5e-4*Math.abs(n-document.documentElement.scrollTop);e.to(window,{duration:s,scrollTo:n,ease:"power2.out"})}export{t as s};

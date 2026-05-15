@@ -1,0 +1,12 @@
+{
+  "name": "kprverse-static",
+  "private": true,
+  "scripts": {
+    "build:components": "vite build"
+  },
+  "devDependencies": {
+    "vue": "^3.3.4",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "vite": "^4.4.5"
+  }
+}

@@ -1,0 +1,1 @@
+import{o as n,l as o,m as r}from"./entry.06ae7dd6.js";const s={fill:"none",viewBox:"0 0 18 14"},t=[r("path",{d:"m1.68 1.11 4.888 4.949A1.04 1.04 0 0 1 6.56 7.53l-4.88 4.818m7.508.59h7.491"},null,-1)];const e={render:function(r,e){return n(),o("svg",s,t)}};export{e as I};

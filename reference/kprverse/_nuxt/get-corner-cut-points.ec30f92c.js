@@ -1,0 +1,1 @@
+const s=({width:s=100,height:h=100,inset:u=10,corner:p="bl"})=>{const x=[];return"tl"==p?(x.push({x:0,y:u}),x.push({x:u,y:0})):x.push({x:0,y:0}),"tr"==p?(x.push({x:s-u,y:0}),x.push({x:s,y:u})):x.push({x:s,y:0}),"br"==p?(x.push({x:s,y:h-u}),x.push({x:s-u,y:h})):x.push({x:s,y:h}),"bl"==p?(x.push({x:u,y:h}),x.push({x:0,y:h-u})):x.push({x:0,y:h}),x};export{s as default};

@@ -1,0 +1,125 @@
+{"frames": [
+
+{
+	"filename": "beams 3_00054.png",
+	"frame": {"x":1,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00055.png",
+	"frame": {"x":227,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00056.png",
+	"frame": {"x":453,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00057.png",
+	"frame": {"x":679,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00058.png",
+	"frame": {"x":905,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00059.png",
+	"frame": {"x":1131,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00060.png",
+	"frame": {"x":1357,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00061.png",
+	"frame": {"x":1583,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00062.png",
+	"frame": {"x":1809,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00063.png",
+	"frame": {"x":1,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00064.png",
+	"frame": {"x":227,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00065.png",
+	"frame": {"x":453,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00066.png",
+	"frame": {"x":679,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00067.png",
+	"frame": {"x":905,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "kai-3.png",
+	"format": "RGBA8888",
+	"size": {"w":2048,"h":2048},
+	"scale": "0.86",
+	"related_multi_packs": [ "kai-0.json", "kai-1.json", "kai-2.json" ],
+	"smartupdate": "$TexturePacker:SmartUpdate:08f4616b3bf5e2ab28b2aee89b2e1598:aabf3caf89c4f4d212c8ccbedf14c377:5dfae4cff178e2c30cc82564d9bcfc38$"
+}
+}

@@ -1,0 +1,1 @@
+import{o as s,l as n,m as t}from"./entry.06ae7dd6.js";const o={xmlns:"http://www.w3.org/2000/svg",fill:"none",viewBox:"0 0 0 0"},r=[t("path",{d:"M10 10c10 10 30 10 40 0",class:"path"},null,-1)];const a={render:function(t,a){return s(),n("svg",o,r)}};export{a as B};

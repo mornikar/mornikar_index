@@ -1,0 +1,109 @@
+{"frames": [
+
+{
+	"filename": "beams_sequence_00036.png",
+	"frame": {"x":1,"y":1,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00037.png",
+	"frame": {"x":340,"y":1,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00038.png",
+	"frame": {"x":679,"y":1,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00039.png",
+	"frame": {"x":1018,"y":1,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00040.png",
+	"frame": {"x":1357,"y":1,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00041.png",
+	"frame": {"x":1696,"y":1,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00042.png",
+	"frame": {"x":1,"y":847,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00043.png",
+	"frame": {"x":340,"y":847,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00044.png",
+	"frame": {"x":679,"y":847,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00045.png",
+	"frame": {"x":1018,"y":847,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00046.png",
+	"frame": {"x":1357,"y":847,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+},
+{
+	"filename": "beams_sequence_00047.png",
+	"frame": {"x":1696,"y":847,"w":337,"h":844},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":337,"h":844},
+	"sourceSize": {"w":337,"h":844}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "beam-3.png",
+	"format": "RGBA8888",
+	"size": {"w":2048,"h":2048},
+	"scale": "0.316",
+	"related_multi_packs": [ "beam-0.json", "beam-1.json", "beam-2.json", "beam-4.json" ],
+	"smartupdate": "$TexturePacker:SmartUpdate:93a441a67e8312351a05575cac1dcd96:eafbd3d1f6520fc48fa86e0163d0e672:9b74d1be5af34acfb44ea9b67875c12a$"
+}
+}

@@ -1,0 +1,173 @@
+{"frames": [
+
+{
+	"filename": "SHIP 2_00020.png",
+	"frame": {"x":1,"y":1,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00021.png",
+	"frame": {"x":511,"y":1,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00022.png",
+	"frame": {"x":1021,"y":1,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00023.png",
+	"frame": {"x":1531,"y":1,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00024.png",
+	"frame": {"x":1,"y":383,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00025.png",
+	"frame": {"x":511,"y":383,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00026.png",
+	"frame": {"x":1021,"y":383,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00027.png",
+	"frame": {"x":1531,"y":383,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00028.png",
+	"frame": {"x":1,"y":765,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00029.png",
+	"frame": {"x":511,"y":765,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00030.png",
+	"frame": {"x":1021,"y":765,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00031.png",
+	"frame": {"x":1531,"y":765,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00032.png",
+	"frame": {"x":1,"y":1147,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00033.png",
+	"frame": {"x":511,"y":1147,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00034.png",
+	"frame": {"x":1021,"y":1147,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00035.png",
+	"frame": {"x":1531,"y":1147,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00036.png",
+	"frame": {"x":1,"y":1529,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00037.png",
+	"frame": {"x":511,"y":1529,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00038.png",
+	"frame": {"x":1021,"y":1529,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+},
+{
+	"filename": "SHIP 2_00039.png",
+	"frame": {"x":1531,"y":1529,"w":508,"h":380},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":508,"h":380},
+	"sourceSize": {"w":508,"h":380}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "beam-ship-1.png",
+	"format": "RGBA8888",
+	"size": {"w":2048,"h":2048},
+	"scale": "0.38",
+	"related_multi_packs": [ "beam-ship-0.json", "beam-ship-2.json" ],
+	"smartupdate": "$TexturePacker:SmartUpdate:773cbe60d7db60729e3e8991276e0a9b:fff0f92667774d7afd7fb99f532ec7e5:955990bc45828cbcc933cb45e329a7b2$"
+}
+}

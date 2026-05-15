@@ -1,0 +1,157 @@
+{"frames": [
+
+{
+	"filename": "beams 3_00000.png",
+	"frame": {"x":1,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00001.png",
+	"frame": {"x":227,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00002.png",
+	"frame": {"x":453,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00003.png",
+	"frame": {"x":679,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00004.png",
+	"frame": {"x":905,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00005.png",
+	"frame": {"x":1131,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00006.png",
+	"frame": {"x":1357,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00007.png",
+	"frame": {"x":1583,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00008.png",
+	"frame": {"x":1809,"y":1,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00009.png",
+	"frame": {"x":1,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00010.png",
+	"frame": {"x":227,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00011.png",
+	"frame": {"x":453,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00012.png",
+	"frame": {"x":679,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00013.png",
+	"frame": {"x":905,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00014.png",
+	"frame": {"x":1131,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00015.png",
+	"frame": {"x":1357,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00016.png",
+	"frame": {"x":1583,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+},
+{
+	"filename": "beams 3_00017.png",
+	"frame": {"x":1809,"y":884,"w":224,"h":881},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":224,"h":881},
+	"sourceSize": {"w":224,"h":881}
+}],
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "kai-0.png",
+	"format": "RGBA8888",
+	"size": {"w":2048,"h":2048},
+	"scale": "0.86",
+	"related_multi_packs": [ "kai-1.json", "kai-2.json", "kai-3.json" ],
+	"smartupdate": "$TexturePacker:SmartUpdate:08f4616b3bf5e2ab28b2aee89b2e1598:aabf3caf89c4f4d212c8ccbedf14c377:5dfae4cff178e2c30cc82564d9bcfc38$"
+}
+}

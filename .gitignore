@@ -1,0 +1,15 @@
+reference/kprverse/node_modules/
+reference/kprverse/**/*.log
+reference/kprverse/*.log
+reference/kprverse/*backup*
+reference/kprverse/*.bak*
+reference/kprverse/index_original.html.*
+reference/kprverse/index_original.html
+reference/kprverse/index_live_test.html
+reference/kprverse/server.js.*
+reference/kprverse/site-config.json.*
+reference/kprverse/_nuxt/*backup*
+reference/kprverse/_nuxt/*.fixed
+reference/kprverse/_nuxt/*.modified
+reference/kprverse - 副本/
+server-out.log

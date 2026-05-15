@@ -1,0 +1,244 @@
+{
+  "_meta": {
+    "description": "Mornikar Portfolio - Content Configuration",
+    "version": "1.2.0",
+    "lastUpdated": "2026-05-08",
+    "howToEdit": "Just modify values below, save, and refresh the browser. No code changes needed.",
+    "imageGuide": "Replace image URLs in the images[] array below. Use CSS selectors as 'selector'. Example: '.homeStoryIntro_img' targets all elements with that class.",
+    "changelog": "v1.2.0 — 恢复所有 Mornikar 文字替换配置（从 backup-20260505-mornikar 合并），gallery 参数保留当前值"
+  },
+  "site": {
+    "title": "Mornikar | Portfolio",
+    "description": "Mornikar - Developer Portfolio & Creative Showcase",
+    "url": "https://mornikar.github.io",
+    "ogImage": "/og.jpg"
+  },
+  "landing": {
+    "desc": "Mornikar is a developer and creator focused on AI-powered tools and knowledge systems. This portfolio showcases projects that blend technology with creative problem-solving.",
+    "keep": "Build",
+    "protect": "Learn",
+    "reimagine": "Create"
+  },
+  "storyIntro": {
+    "title": "Where code meets creativity... Explore the portfolio.",
+    "body": "Bridging the gap between technical excellence and innovative design, each project represents a unique approach to solving real-world challenges.",
+    "video_caption": "Demo Reel",
+    "character_caption": "Developer",
+    "image_caption_medium": "Project Preview"
+  },
+  "storyProject": {
+    "strapline_1": "Every project starts with a question: how can technology serve people better?",
+    "strapline_2": "From AI assistants to knowledge platforms — building tools that empower and connect.",
+    "console_text_loading": "//Initializing\nPortfolio System\n\nLoading...[47%]\n\nProject_Data\nTech_Stack\nRecent_Updates",
+    "console_text_coordinates": "N 39°54.50\nE 116°24.30",
+    "console_text_temperature": "26.5°"
+  },
+  "collection": {
+    "name": "Mornikar's Portfolio",
+    "size": "∞",
+    "launch_date": "2024",
+    "launch_label": "LIVE",
+    "caption_1": "AI PM Skills",
+    "caption_2": "Wiki System"
+  },
+  "collectionIntro": {
+    "_comment": "Collection section character portrait — DOM overlay, not Canvas",
+    "characterImage": "/images/newImage/01.webp",
+    "mediaImage": "/images/newImage/08.webp"
+  },
+  "collectionGallery": {
+    "heading": "MORNIKAR 的作品展览",
+    "body": "Every developer is on the path of creation. The traits they possess stem from the creation of imagination. These developers are highly representative, embodying creativity, imagination, and represent the core concepts in the development of AI - evolution, innovation, and imagination.",
+    "description": "A showcase of technical projects.",
+    "console_text": "Mornikar's Portfolio"
+  },
+  "tableaux": {
+    "keep": {
+      "description": "A curated collection of tools and systems designed to streamline development workflows and enhance productivity.",
+      "console_text": "Projects"
+    },
+    "factions": {
+      "description": "Two sides of the same coin — the analytical mind that debugs and the creative mind that designs, working in harmony.",
+      "console_text": "Approach"
+    },
+    "universe": {
+      "description": "AI——这个时代最伟大的发明，预示着人类迎来了黄金时代。\n如同那当时的蒸汽汽车，这将是技术喷发的盛世",
+      "console_text": "Vision"
+    }
+  },
+  "launch": {
+    "day": "09",
+    "month": "09",
+    "cta_label": "View Projects",
+    "description": "What will you build when technology and imagination converge? Explore the portfolio and find out.",
+    "console_text": "Explore Portfolio",
+    "link_caption_keep": "Projects",
+    "link_caption_factions": "Approach",
+    "link_caption_universe": "Vision"
+  },
+  "nav": {
+    "buy_title": "View On",
+    "nav_title": "Navigate",
+    "social_title": "Connect",
+    "items": [
+      { "label": "Story", "url": "us-en/" },
+      { "label": "MMO_CMS", "url": "https://mornikar.github.io/admin/" },
+      { "label": "Mornikar", "url": "https://mornikar.github.io/" },
+      { "label": "Media", "url": "us-en/media" },
+      { "label": "Gallery", "url": "us-en/gallery" },
+      { "label": "About", "url": "us-en/about" }
+    ],
+    "social_links": [
+      { "label": "Twitter", "url": "" },
+      { "label": "Discord", "url": "" }
+    ]
+  },
+  "footer": {
+    "nav_title": "Explore More",
+    "social_title": "Get in Touch",
+    "press_title": "About This Portfolio",
+    "press_desc": "Interested in collaboration or want to learn more about these projects?",
+    "press_kit_label": "Download Resume",
+    "press_contact_us": "Reach out at",
+    "press_email": "1548324254@qq.com",
+    "press_github": "https://github.com/mornikar",
+    "console": "// initializing\nnew projects loaded\n\n    ai_assistant_v2.js\n    wiki_platform.ts\n\nactivate console for details...",
+    "copyright": "© 2024",
+    "nav_items": [
+      { "label": "Story", "url": "us-en/" },
+      { "label": "Mornikar", "url": "https://mornikar.github.io/" },
+      { "label": "Media", "url": "us-en/media" },
+      { "label": "Gallery", "url": "us-en/gallery" },
+      { "label": "About", "url": "us-en/about" },
+      { "label": "mornikar", "url": "https://github.com/mornikar" }
+    ],
+    "legal_items": [
+      { "label": "Privacy Policy", "url": "us-en/legal/privacy-policy" },
+      { "label": "Terms of Service", "url": "us-en/legal/terms-of-service" },
+      { "label": "Legal License", "url": "us-en/legal/legal-license" }
+    ]
+  },
+  "social": {
+    "twitter": "https://twitter.com/kprverse",
+    "instagram": "https://instagram.com/kpr.verse",
+    "discord": "https://discord.com/invite/kpr"
+  },
+  "images": [
+    {
+      "_comment": "=== 首页图库替换 ===",
+      "_note": "selector: CSS选择器，如 '.my-class' 或 'img[alt=text]'",
+      "_note2": "src: 替换后的图片路径（放 images/ 目录），相对于服务器根目录",
+      "_note3": "backgroundImage: true → 替换 CSS background-image 而非 <img> src"
+    },
+    {
+      "selector": ".homeProjectIntro__img1",
+      "src": "/images/newImage/03.jpg",
+      "_comment": "ProjectIntro 左下角侧面图片，DOM class=homeProjectIntro__img1Wrap 内的 <img>"
+    }
+  ],
+  "texts": [
+    {
+      "_comment": "=== 文字替换规则 (DOM 兜底层) ===",
+      "_note": "original: 要替换的原始文字（完全匹配），replacement: 替换后的文字",
+      "_note2": "这些规则由 content-patcher.js MutationObserver 在客户端执行，作为 server.js patchNuxtHtml() 的安全网"
+    },
+    {
+      "original": "KEEPERS",
+      "replacement": "PORTFOLIO"
+    },
+    {
+      "original": "KPR is a brand that focuses on collective narrx",
+      "replacement": "Mornikar is a developer focused on AI-po"
+    },
+    {
+      "original": "KPR is a brand that focuses on collective narrative and empowering storytellers. Keepers is a living story, an uncharted",
+      "replacement": "Mornikar is a developer and creator focused on AI-powered tools and knowledge systems. This portfolio showcases"
+    },
+    {
+      "original": "A familiar world... Set on a different path.",
+      "replacement": "Where code meets creativity... Explore the portfolio."
+    },
+    {
+      "original": "Isolated within the New Eden safe zone, you witness humanity struggling to avoid descending into chaos.",
+      "replacement": "Bridging the gap between technical excellence and innovative design, each project represents a unique approach to solving real-world challenges."
+    },
+    {
+      "original": "You are a Keeper: an agent of power and change in this world.",
+      "replacement": "Every project starts with a question: how can technology serve people better?"
+    },
+    {
+      "original": "What will you do with this power? Will you choose to protect or destroy? To give or to take?",
+      "replacement": "From AI assistants to knowledge platforms — building tools that empower and connect."
+    },
+    {
+      "original": "What path will you forge as you become the Keeper of your destiny?",
+      "replacement": "What will you build when technology and imagination converge? Explore the portfolio and find out."
+    },
+    {
+      "original": "The last stronghold of all knowledge. The Keep is where all the value accrues. A place to wonder, protect, and fight for.",
+      "replacement": "A curated collection of tools and systems designed to streamline development workflows and enhance productivity."
+    },
+    {
+      "original": "One world, two factions. Divided in belief, united in purpose.",
+      "replacement": "Two sides of the same coin — the analytical mind that debugs and the creative mind that designs, working in harmony."
+    },
+    {
+      "original": "The discovery of Kai, the world's primordial energy source, heralded mankind's Golden Age. Or so they believed.",
+      "replacement": "AI——这个时代最伟大的发明，预示着人类迎来了黄金时代。\n如同那当时的蒸汽汽车，这将是技术喷发的盛世"
+    },
+    {
+      "original": "Discover More",
+      "replacement": "Explore More"
+    },
+    {
+      "original": "Join the Conversation",
+      "replacement": "Get in Touch"
+    },
+    {
+      "original": "More Details",
+      "replacement": "About This Portfolio"
+    },
+    {
+      "original": "Want to learn more about how we collaborate with partners?",
+      "replacement": "Interested in collaboration or want to learn more about these projects?"
+    },
+    {
+      "original": "Every Keeper is born, endowed with attributes from a collection of over 400 meticulously hand-painted assets. They are personable, iconic possessions that represent KPR's foundational pillars of evolution, inclusion, and imagination.",
+      "replacement": "Every developer is on the path of creation. The traits they possess stem from the creation of imagination. These developers are highly representative, embodying creativity, imagination, and represent the core concepts in the development of AI - evolution, innovation, and imagination."
+    },
+    {
+      "original": "Featured Works",
+      "replacement": "MORNIKAR 的作品展览"
+    },
+    {
+      "original": "HELLO@KPRVERSE.COM",
+      "replacement": "1548324254@qq.com"
+    },
+    {
+      "original": "Download Brand Book",
+      "replacement": "Download Resume"
+    }
+  ],
+  "gallery": {
+    "videos": [
+      {
+        "selector": ".collectionGallery__item",
+        "bvid": "BV1jymLBsENj",
+        "label": "AI PM Skills Demo",
+        "cardIndex": 0
+      }
+    ],
+    "cardScale": 1.2,
+    "carouselInterval": 10,
+    "previewDuration": 10
+  },
+  "background": {
+    "_comment": "mode=off 关闭背景替换，mode=image 启用图片背景",
+    "mode": "off"
+  },
+  "projectIntro": {
+    "_comment": "projectIntro 区域配置",
+    "mode": "image",
+    "image": "/images/newImage/02.jpg"
+  }
+}
