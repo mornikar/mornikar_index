@@ -1,16 +1,18 @@
 (function () {
-  var DEFAULT_ICON_URL = '/images/newImage/profile-card-icon-pattern.svg';
+  var DEFAULT_ICON_URL = '/images/newImage/profile-card-iconpattern.png';
+  var DEFAULT_GRAIN_URL = '/images/newImage/profile-card-grain.webp';
 
   var profileCard = {
-    name: 'GT/罗锦涛',
-    title: 'AI产品经理',
+    name: 'AI产品经理',
+    laserText: 'GT',
+    title: 'GT/罗锦涛',
     handle: '1548324254@qq.com',
-    status: '离职',
+    status: '在线',
     contactText: '联系',
     avatarUrl: '/images/newImage/gt-avatar-cutout.png',
     miniAvatarUrl: '/images/newImage/gt-avatar-cutout.png',
     iconUrl: DEFAULT_ICON_URL,
-    grainUrl: '',
+    grainUrl: DEFAULT_GRAIN_URL,
     innerGradient: 'linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)',
     behindGlowEnabled: true,
     behindGlowColor: 'rgba(125, 190, 255, 0.67)',
@@ -134,8 +136,9 @@
   function makeProfileCard(data, variant) {
     var wrapper = createElement('div', 'pc-card-wrapper pc-card-wrapper--' + variant);
     var iconUrl = data.iconUrl === '' ? '' : (data.iconUrl || DEFAULT_ICON_URL);
+    var grainUrl = data.grainUrl === '' ? '' : (data.grainUrl || DEFAULT_GRAIN_URL);
     wrapper.style.setProperty('--icon', iconUrl ? 'url(' + iconUrl + ')' : 'none');
-    wrapper.style.setProperty('--grain', data.grainUrl ? 'url(' + data.grainUrl + ')' : 'none');
+    wrapper.style.setProperty('--grain', grainUrl ? 'url(' + grainUrl + ')' : 'none');
     wrapper.style.setProperty('--inner-gradient', data.innerGradient || 'linear-gradient(145deg,#60496e8c 0%,#71C4FF44 100%)');
     wrapper.style.setProperty('--behind-glow-color', data.behindGlowColor || 'rgba(125, 190, 255, 0.67)');
     wrapper.style.setProperty('--behind-glow-size', data.behindGlowSize || '50%');
@@ -149,6 +152,7 @@
     var inside = createElement('div', 'pc-inside');
     var shine = createElement('div', 'pc-shine');
     var glare = createElement('div', 'pc-glare');
+    var laserText = createElement('div', 'pc-laser-text', data.laserText || '');
     var avatarContent = createElement('div', 'pc-content pc-avatar-content');
     var avatar = createElement('img', 'avatar');
     var userInfo = createElement('div', 'pc-user-info');
@@ -185,6 +189,7 @@
       event.stopPropagation();
       if (data.href) window.location.href = data.href;
     });
+    laserText.setAttribute('aria-hidden', 'true');
 
     userText.appendChild(handle);
     userText.appendChild(status);
@@ -200,6 +205,7 @@
     content.appendChild(details);
     inside.appendChild(shine);
     inside.appendChild(glare);
+    inside.appendChild(laserText);
     inside.appendChild(avatarContent);
     inside.appendChild(content);
     section.appendChild(inside);
@@ -210,12 +216,16 @@
   }
 
   function findMainTarget() {
-    return document.querySelector('.homeProjectIntro__hero') ||
+    return document.querySelector('.homeProjectIntro__profileCard') ||
       document.querySelector('.homeProjectIntro .block--bottomleft.block') ||
       document.querySelector('.block--bottomleft.block');
   }
 
   function findFooterTarget() {
+    if (document.documentElement.classList.contains('mornikar-external-shell')) {
+      return ensureExternalShellProfileStage();
+    }
+
     var footerTarget = document.querySelector('.the-footer .pointer-events-none');
     if (footerTarget && footerTarget.querySelector('.section.kpr')) return footerTarget;
 
@@ -224,6 +234,16 @@
       if (allTargets[i].querySelector('.section.kpr')) return allTargets[i];
     }
     return null;
+  }
+
+  function ensureExternalShellProfileStage() {
+    var existing = document.querySelector('.mornikar-profile-stage.pointer-events-none');
+    if (existing) return existing;
+
+    var stage = createElement('div', 'pointer-events-none mornikar-profile-stage');
+    stage.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(stage);
+    return stage;
   }
 
   function removeOldBlockGrid(target) {
@@ -239,30 +259,7 @@
   function syncFeatureCardWithHero(grid) {
     if (grid.dataset.mornikarHeroTransitionSynced === 'true') return;
     grid.dataset.mornikarHeroTransitionSynced = 'true';
-
-    var hero = document.querySelector('.homeProjectIntro__hero') || grid.parentNode;
-    var section = document.querySelector('.homeProjectIntro');
-
-    function frame() {
-      if (!document.documentElement.contains(grid)) return;
-
-      var rect = hero.getBoundingClientRect();
-      var vh = window.innerHeight || document.documentElement.clientHeight || 1;
-      var sectionOpacity = section ? parseFloat(window.getComputedStyle(section).opacity) : 1;
-      if (!isFinite(sectionOpacity)) sectionOpacity = 1;
-
-      var center = rect.top + rect.height / 2;
-      var distance = Math.abs(center - vh * 0.55);
-      var raw = 1 - clamp(distance / (vh * 0.75), 0, 1);
-      var visible = rect.bottom > 0 && rect.top < vh && sectionOpacity > 0.02;
-      var progress = visible ? Math.max(0, raw * sectionOpacity) : 0;
-
-      grid.style.setProperty('--mornikar-hero-progress', progress.toFixed(3));
-      grid.classList.toggle('mornikar-profile-grid--hero-active', progress > 0.12);
-      window.requestAnimationFrame(frame);
-    }
-
-    window.requestAnimationFrame(frame);
+    grid.classList.add('mornikar-profile-grid--hero-active');
   }
 
   function mountFeatureCard() {
@@ -299,12 +296,108 @@
   }
 
   function setHackyText(root, text) {
-    var spacer = root.querySelector('.spacer');
-    var animation = root.querySelector('.animation');
-    if (spacer && spacer.textContent !== text) spacer.textContent = text;
-    if (animation && animation.textContent !== text) animation.textContent = text;
+    if (!root) return;
+    var spacers = root.querySelectorAll ? root.querySelectorAll('.spacer') : [];
+    var animations = root.querySelectorAll ? root.querySelectorAll('.animation') : [];
+    for (var s = 0; s < spacers.length; s += 1) {
+      if (spacers[s].textContent !== text) spacers[s].textContent = text;
+    }
+    for (var a = 0; a < animations.length; a += 1) {
+      if (animations[a].textContent !== text) animations[a].textContent = text;
+    }
     if (root.classList && root.classList.contains('animation') && root.textContent !== text) root.textContent = text;
     if (root.getAttribute && root.getAttribute('aria-label') !== text) root.setAttribute('aria-label', text);
+  }
+
+  var inlineLinkTargets = {
+    'https://mornikar.github.io/': true,
+    'https://mornikar.github.io/admin/': true,
+    'https://github.com/mornikar': true,
+    'https://space.bilibili.com/46336819': true,
+    'https://opensea.io/profile': true
+  };
+
+  function shouldOpenInline(url) {
+    return false;
+  }
+
+  function closeInlineLinkViewer() {
+    var viewer = document.querySelector('.mornikar-link-viewer');
+    if (!viewer) return;
+    viewer.classList.remove('is-open');
+    document.documentElement.classList.remove('mornikar-link-viewer-open');
+    var iframe = viewer.querySelector('.mornikar-link-viewer__frame');
+    if (iframe) iframe.src = 'about:blank';
+  }
+
+  function ensureInlineLinkViewer() {
+    var existing = document.querySelector('.mornikar-link-viewer');
+    if (existing) return existing;
+
+    var viewer = createElement('div', 'mornikar-link-viewer');
+    var backdrop = createElement('button', 'mornikar-link-viewer__backdrop');
+    var panel = createElement('section', 'mornikar-link-viewer__panel');
+    var toolbar = createElement('div', 'mornikar-link-viewer__toolbar');
+    var meta = createElement('div', 'mornikar-link-viewer__meta');
+    var title = createElement('div', 'mornikar-link-viewer__title');
+    var urlText = createElement('div', 'mornikar-link-viewer__url');
+    var actions = createElement('div', 'mornikar-link-viewer__actions');
+    var open = createElement('a', 'mornikar-link-viewer__open', '打开');
+    var close = createElement('button', 'mornikar-link-viewer__close', '关闭');
+    var frameWrap = createElement('div', 'mornikar-link-viewer__frame-wrap');
+    var fallback = createElement('div', 'mornikar-link-viewer__fallback', '如果目标网站限制内嵌，请使用右上角打开。');
+    var iframe = createElement('iframe', 'mornikar-link-viewer__frame');
+
+    backdrop.type = 'button';
+    backdrop.setAttribute('aria-label', '关闭链接预览');
+    close.type = 'button';
+    iframe.setAttribute('title', 'Mornikar link preview');
+    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+
+    backdrop.addEventListener('click', closeInlineLinkViewer);
+    close.addEventListener('click', closeInlineLinkViewer);
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeInlineLinkViewer();
+    });
+
+    meta.appendChild(title);
+    meta.appendChild(urlText);
+    actions.appendChild(open);
+    actions.appendChild(close);
+    toolbar.appendChild(meta);
+    toolbar.appendChild(actions);
+    frameWrap.appendChild(fallback);
+    frameWrap.appendChild(iframe);
+    panel.appendChild(toolbar);
+    panel.appendChild(frameWrap);
+    viewer.appendChild(backdrop);
+    viewer.appendChild(panel);
+    document.body.appendChild(viewer);
+    return viewer;
+  }
+
+  function openInlineLinkViewer(url, titleText) {
+    var viewer = ensureInlineLinkViewer();
+    var title = viewer.querySelector('.mornikar-link-viewer__title');
+    var urlText = viewer.querySelector('.mornikar-link-viewer__url');
+    var open = viewer.querySelector('.mornikar-link-viewer__open');
+    var iframe = viewer.querySelector('.mornikar-link-viewer__frame');
+    if (title) title.textContent = titleText || 'Mornikar';
+    if (urlText) urlText.textContent = url;
+    if (open) {
+      open.href = url;
+      open.target = '_blank';
+      open.rel = 'noopener noreferrer';
+    }
+    if (iframe) {
+      iframe.src = 'about:blank';
+      window.setTimeout(function () {
+        iframe.src = url;
+      }, 30);
+    }
+    viewer.classList.add('is-open');
+    document.documentElement.classList.add('mornikar-link-viewer-open');
   }
 
   function wireJump(element, url) {
@@ -317,13 +410,82 @@
     }
     clickable.style.pointerEvents = 'auto';
     clickable.style.cursor = 'pointer';
-    if (!clickable.dataset.mornikarJumpPatched) {
+    clickable.dataset.mornikarJumpUrl = url;
+    clickable.dataset.mornikarJumpTitle = textOf(element) || textOf(clickable) || url;
+    if (!clickable.dataset.mornikarJumpHandlerPatched) {
+      clickable.dataset.mornikarJumpHandlerPatched = 'true';
       clickable.dataset.mornikarJumpPatched = 'true';
       clickable.addEventListener('click', function (event) {
+        var targetUrl = clickable.dataset.mornikarJumpUrl || url;
         event.preventDefault();
+        if (event.stopImmediatePropagation) event.stopImmediatePropagation();
         event.stopPropagation();
-        window.location.href = url;
-      });
+        if (shouldOpenInline(targetUrl)) {
+          openInlineLinkViewer(targetUrl, clickable.dataset.mornikarJumpTitle);
+        } else {
+          window.location.assign(targetUrl);
+        }
+      }, true);
+    }
+  }
+
+  var shellRoutes = {
+    '/protocol': true,
+    '/journal': true,
+    '/media': true,
+    '/gallery': true,
+    '/about': true,
+    '/mornikar': true,
+    '/bilibili': true,
+    '/opensea-profile': true
+  };
+
+  function normalizeMenuRoute(url) {
+    return url === '/journal' ? '/protocol?shell=mornikar' : url;
+  }
+
+  function shellRouteFromHref(href) {
+    if (!href) return '';
+    try {
+      var parsed = new URL(href, window.location.href);
+      if (parsed.origin !== window.location.origin) return '';
+      return shellRoutes[parsed.pathname] ? normalizeMenuRoute(parsed.pathname + parsed.search + parsed.hash) : '';
+    } catch (error) {
+      return shellRoutes[href] ? normalizeMenuRoute(href) : '';
+    }
+  }
+
+  function installJumpCapture() {
+    if (document.documentElement.dataset.mornikarJumpCapture === 'true') return;
+    document.documentElement.dataset.mornikarJumpCapture = 'true';
+    document.addEventListener('click', function (event) {
+      var target = event.target;
+      var clickable = target && target.closest && target.closest('[data-mornikar-jump-url]');
+      var link = target && target.closest && target.closest('a[href]');
+      var targetUrl = clickable && clickable.getAttribute('data-mornikar-jump-url');
+      if (!targetUrl && link) targetUrl = shellRouteFromHref(link.getAttribute('href'));
+      if (!targetUrl) return;
+      event.preventDefault();
+      if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+      event.stopPropagation();
+      if (shouldOpenInline(targetUrl)) {
+        openInlineLinkViewer(targetUrl, clickable.getAttribute('data-mornikar-jump-title') || targetUrl);
+      } else {
+        window.location.assign(targetUrl);
+      }
+    }, true);
+  }
+
+  function patchRouteAnchors() {
+    var links = document.querySelectorAll('a[href]');
+    for (var i = 0; i < links.length; i += 1) {
+      var url = shellRouteFromHref(links[i].getAttribute('href'));
+      if (!url) continue;
+      links[i].target = '_self';
+      links[i].rel = 'noopener noreferrer';
+      links[i].dataset.mornikarJumpUrl = url;
+      links[i].style.pointerEvents = 'auto';
+      links[i].style.cursor = 'pointer';
     }
   }
 
@@ -331,51 +493,99 @@
     return (element.textContent || '').replace(/\s+/g, ' ').trim();
   }
 
-  function patchJournalLink() {
-    if (document.documentElement.dataset.mornikarJournalPatched === 'true') return true;
-    var nodes = document.querySelectorAll('.hacky-text, a, button, .link-hover');
+  function canonicalText(element) {
+    var raw = textOf(element);
+    var compact = raw.replace(/\s+/g, '');
+    if (compact.length > 1 && compact.length % 2 === 0) {
+      var half = compact.slice(0, compact.length / 2);
+      if (half === compact.slice(compact.length / 2)) return half;
+    }
+    return raw;
+  }
+
+  function findHackyRoot(element) {
+    if (!element) return null;
+    if (element.classList && element.classList.contains('hacky-text')) return element;
+    return (element.closest && element.closest('.hacky-text')) ||
+      element.querySelector && element.querySelector('.hacky-text') ||
+      element;
+  }
+
+  function patchLabelByText(sourceText, nextText, url, options) {
+    var patched = false;
+    var shouldMatchNext = options && options.matchNext;
+    var nodes = document.querySelectorAll('.hacky-text, .animation, a, button, .link-hover, .menu-nav-item');
     for (var i = 0; i < nodes.length; i += 1) {
-      if (textOf(nodes[i]).toUpperCase() === 'JOURNAL') {
-        setHackyText(nodes[i].classList.contains('hacky-text') ? nodes[i] : (nodes[i].querySelector('.hacky-text') || nodes[i]), 'Mornikar');
-        wireJump(nodes[i], 'https://mornikar.github.io/');
-        document.documentElement.dataset.mornikarJournalPatched = 'true';
-        return true;
+      var rawLabel = canonicalText(nodes[i]);
+      var label = rawLabel.toUpperCase();
+      var nextMatches = shouldMatchNext && (options.caseSensitiveNext ? rawLabel === nextText : label === nextText.toUpperCase());
+      if (label === sourceText.toUpperCase() || nextMatches) {
+        setHackyText(findHackyRoot(nodes[i]), nextText);
+        wireJump(nodes[i], url);
+        patched = true;
       }
     }
-    return false;
+    return patched;
+  }
+
+  function patchHomeLink() {
+    var r1 = patchLabelByText('STORY', 'Home', '/', { matchNext: true, caseSensitiveNext: true });
+    var r2 = patchLabelByText('HOME', 'Home', '/', { matchNext: true, caseSensitiveNext: true });
+    return r1 || r2;
+  }
+
+  function patchJournalLink() {
+    return patchLabelByText('JOURNAL', 'Mornikar', '/protocol?shell=mornikar', { matchNext: true, caseSensitiveNext: true });
   }
 
   function patchMenuNavItem() {
-    if (document.documentElement.dataset.mornikarCmsPatched === 'true') return true;
-    var items = document.querySelectorAll('.menu-nav-item.pointer-events-auto, .menu-nav-item');
-    var target = null;
-    for (var i = 0; i < items.length; i += 1) {
-      var label = textOf(items[i]).toUpperCase();
-      if (label === 'PROTOCOL' || label === 'MEDIA' || label === 'GALLERY' || label === 'DISCOVER') {
-        target = items[i];
-        break;
-      }
-    }
-    if (!target) return false;
-    setHackyText(target.querySelector('.hacky-text') || target, 'MMO_CMS');
-    wireJump(target, 'https://mornikar.github.io/admin/');
-    document.documentElement.dataset.mornikarCmsPatched = 'true';
-    return true;
+    return patchLabelByText('PROTOCOL', 'MMO_CMS', '/protocol', { matchNext: true, caseSensitiveNext: true });
+  }
+
+  function patchPortfolioLink() {
+    var r1 = patchLabelByText('MEDIA', 'Portfolio', '/media', { matchNext: true, caseSensitiveNext: true });
+    var r2 = patchLabelByText('KEEPERS', 'Portfolio', '/media', { matchNext: true, caseSensitiveNext: true });
+    var r3 = patchLabelByText('PORTFOLIO', 'Portfolio', '/media', { matchNext: true, caseSensitiveNext: true });
+    return r1 || r2 || r3;
+  }
+
+  function patchGalleryLink() {
+    return patchLabelByText('GALLERY', 'GALLERY', '/gallery', { matchNext: true });
+  }
+
+  function patchAboutLink() {
+    return patchLabelByText('ABOUT', 'ABOUT', '/about', { matchNext: true });
   }
 
   function patchGithubText() {
-    if (document.documentElement.dataset.mornikarGithubPatched === 'true') return true;
-    var candidates = document.querySelectorAll('.the-footer .item.social a, .the-footer .item.social .hacky-text, a[href*="twitter"], a[href*="discord"]');
-    var target = candidates[0] || null;
-    if (!target) return false;
-    setHackyText(target.querySelector('.hacky-text') || target, 'mornikar');
-    wireJump(target, 'https://github.com/mornikar');
-    document.documentElement.dataset.mornikarGithubPatched = 'true';
-    return true;
+    var r1 = patchLabelByText('GITHUB', 'mornikar', '/mornikar', { matchNext: true, caseSensitiveNext: true });
+    var r2 = patchLabelByText('CAREERS', 'mornikar', '/mornikar', { matchNext: true, caseSensitiveNext: true });
+    return r1 || r2;
+  }
+
+  function patchAnimationLabel(sourceText, nextText, url) {
+    return patchLabelByText(sourceText, nextText, url, { matchNext: sourceText.toUpperCase() === nextText.toUpperCase() || nextText.toUpperCase() === 'BILIBILI' });
+  }
+
+  function patchSocialLinks() {
+    var r1 = patchAnimationLabel('TWITTER', 'BILIBILI', '/bilibili');
+    var r2 = patchAnimationLabel('DISCORD', 'BILIBILI', '/bilibili');
+    var r3 = patchAnimationLabel('OPENSEA', 'OPENSEA', '/opensea-profile');
+    return r1 && r2 && r3;
   }
 
   function patchTextLinks() {
-    return [patchJournalLink(), patchMenuNavItem(), patchGithubText()].filter(Boolean).length;
+    patchRouteAnchors();
+    return [
+      patchHomeLink(),
+      patchMenuNavItem(),
+      patchJournalLink(),
+      patchPortfolioLink(),
+      patchGalleryLink(),
+      patchAboutLink(),
+      patchGithubText(),
+      patchSocialLinks()
+    ].filter(Boolean).length;
   }
 
   function mount() {
@@ -387,12 +597,37 @@
   function scheduleTextPatch() {
     if (document.documentElement.dataset.mornikarTextPatchScheduled === 'true') return;
     document.documentElement.dataset.mornikarTextPatchScheduled = 'true';
+    installJumpCapture();
+    function patchTextLinksSoon() {
+      patchTextLinks();
+      window.setTimeout(patchTextLinks, 120);
+      window.setTimeout(patchTextLinks, 600);
+    }
     var tries = 0;
     var timer = window.setInterval(function () {
       tries += 1;
-      var count = patchTextLinks();
-      if (count >= 3 || tries > 180) window.clearInterval(timer);
-    }, 1000);
+      patchTextLinks();
+      if (tries > 240) window.clearInterval(timer);
+    }, 500);
+    if (window.MutationObserver) {
+      var observerQueued = false;
+      var observer = new MutationObserver(function () {
+        if (observerQueued) return;
+        observerQueued = true;
+        window.requestAnimationFrame(function () {
+          observerQueued = false;
+          patchTextLinks();
+        });
+      });
+      observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    }
+    window.addEventListener('pageshow', patchTextLinksSoon);
+    window.addEventListener('popstate', patchTextLinksSoon);
+    window.addEventListener('focus', patchTextLinksSoon);
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) patchTextLinksSoon();
+    });
+    patchTextLinksSoon();
   }
 
   function boot() {
@@ -406,7 +641,7 @@
           tries += 1;
           if (mount() || tries > 40) window.clearInterval(timer);
         }, 500);
-      }, 1000);
+      }, 200);
     };
 
     if (document.readyState === 'complete') {

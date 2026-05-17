@@ -1,0 +1,105 @@
+html.mornikar-external-shell,
+html.mornikar-external-shell body {
+  background: #05070c !important;
+  overflow: hidden !important;
+}
+
+.mornikar-external-shell-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #05070c;
+}
+
+.mornikar-external-shell-bg iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #fff;
+}
+
+html.mornikar-external-shell #__nuxt,
+html.mornikar-external-shell #app,
+html.mornikar-external-shell #layout {
+  background: transparent !important;
+  pointer-events: none;
+  position: relative;
+  z-index: 2;
+}
+
+html.mornikar-external-shell #canvas-container,
+html.mornikar-external-shell #ui-container,
+html.mornikar-external-shell #page,
+html.mornikar-external-shell .widescreen-warning,
+html.mornikar-external-shell .landscape-warning,
+html.mornikar-external-shell [class*="widescreen-warning"],
+html.mornikar-external-shell [class*="landscape-warning"] {
+  display: none !important;
+}
+
+html.mornikar-external-shell .the-frame .desktop-only,
+html.mornikar-external-shell .the-menu .desktop-only {
+  display: flex !important;
+}
+
+html.mornikar-external-shell .the-frame .mobile-only,
+html.mornikar-external-shell .the-menu .mobile-only {
+  display: none !important;
+}
+
+html.mornikar-external-shell .smooth-wrapper,
+html.mornikar-external-shell .smooth-content {
+  background: transparent !important;
+  pointer-events: none;
+}
+
+html.mornikar-external-shell .the-frame,
+html.mornikar-external-shell [class*="the-frame"],
+html.mornikar-external-shell .the-menu,
+html.mornikar-external-shell [class*="the-menu"],
+html.mornikar-external-shell .btn-burger,
+html.mornikar-external-shell .the-frame-submenu,
+html.mornikar-external-shell .group,
+html.mornikar-external-shell .group.submenu,
+html.mornikar-external-shell .left.flex-col.desktop-only,
+html.mornikar-external-shell .submenu,
+html.mornikar-external-shell #frame-overlays {
+  z-index: 2147483000 !important;
+}
+
+html.mornikar-external-shell .the-frame {
+  display: flex !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  position: fixed !important;
+}
+
+html.mornikar-external-shell .the-frame .pin,
+html.mornikar-external-shell .the-frame-layer,
+html.mornikar-external-shell .the-frame-submenu {
+  inset: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+}
+
+html.mornikar-external-shell .the-frame-submenu {
+  align-items: center !important;
+  display: flex !important;
+  position: relative !important;
+}
+
+html.mornikar-external-shell .btn-burger,
+html.mornikar-external-shell .group.submenu,
+html.mornikar-external-shell .left.flex-col.desktop-only a,
+html.mornikar-external-shell .left.flex-col.desktop-only button,
+html.mornikar-external-shell .the-menu,
+html.mornikar-external-shell .the-menu * {
+  pointer-events: auto !important;
+}
+
+html.mornikar-external-shell #widget-login-dropdown,
+html.mornikar-external-shell #widget-login-kpr.gh-modal-overlay {
+  z-index: 2147483002 !important;
+  pointer-events: auto !important;
+}

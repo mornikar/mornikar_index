@@ -11,6 +11,7 @@ const path = require('path');
 const PORT = 5679;
 const ROOT = __dirname;
 const UPSTREAM = 'https://kprverse.com';
+const MORNIKAR_STATIC_BOOT_RE = /<!-- MORNIKAR_STATIC_BOOT_START -->[\s\S]*?<!-- MORNIKAR_STATIC_BOOT_END -->/g;
 
 process.on('uncaughtException', (err) => {
   console.error('[server] uncaughtException:', err && err.stack || err);
@@ -23,6 +24,16 @@ process.on('unhandledRejection', (err) => {
 // ── Server-side __NUXT__ HTML patching ──
 // Replaces string values in the __NUXT__ payload directly in the HTML source.
 // This ensures Vue hydrates with patched data — no browser timing issues.
+function stripMornikarStaticBoot(html) {
+  return html.replace(MORNIKAR_STATIC_BOOT_RE, '');
+}
+
+function disableLegacyKprLoginWidget(html) {
+  return html
+    .replace(/widget_bundle_js:"[^"]*"/g, 'widget_bundle_js:""')
+    .replace(/widget_bundle_css:"[^"]*"/g, 'widget_bundle_css:""');
+}
+
 function patchNuxtHtml(html, config) {
   if (!config) return html;
 
@@ -117,6 +128,10 @@ function patchNuxtHtml(html, config) {
   if (config.nav) {
     if (config.nav.buy_title) patches.push({ from: 'Buy On', to: config.nav.buy_title });
     if (config.nav.nav_title) patches.push({ from: 'Discover', to: config.nav.nav_title });
+    patches.push({ from: 'Story', to: 'Home' });
+    patches.push({ from: 'Protocol', to: 'MMO_CMS' });
+    patches.push({ from: 'Journal', to: 'Mornikar' });
+    patches.push({ from: 'Media', to: 'Portfolio' });
   }
 
   // ── Footer ──
@@ -131,6 +146,15 @@ function patchNuxtHtml(html, config) {
       patches.push({ from: 'HELLO@KPRVERSE.COM', to: f.press_email });
       patches.push({ from: 'hello@kprverse.com', to: f.press_email });
     }
+    patches.push({ from: 'Careers', to: 'mornikar' });
+    patches.push({ from: 'https://kpr.homerun.co/?lang=en', to: '/mornikar' });
+    patches.push({ from: 'Twitter', to: 'BILIBILI' });
+    patches.push({ from: 'https://twitter.com/KPRVERSE', to: '/bilibili' });
+    patches.push({ from: 'https://twitter.com/kprverse', to: '/bilibili' });
+    patches.push({ from: 'Discord', to: 'BILIBILI' });
+    patches.push({ from: 'https://discord.com/invite/kpr', to: '/bilibili' });
+    patches.push({ from: 'OpenSea', to: 'OPENSEA' });
+    patches.push({ from: 'https://opensea.io/collection/kprverse', to: '/opensea-profile' });
     if (f.copyright) patches.push({ from: '© 2022', to: f.copyright });
   }
 
@@ -276,10 +300,560 @@ function rewriteCssFonts(upRes, res, contentType) {
   });
 }
 
+function sendJson(res, statusCode, payload) {
+  res.writeHead(statusCode, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Access-Control-Allow-Origin': '*',
+    'Cache-Control': 'no-store',
+  });
+  res.end(JSON.stringify(payload));
+}
+
+function requestJson(url, options, body) {
+  return new Promise((resolve, reject) => {
+    const parsed = new URL(url);
+    const req = https.request({
+      protocol: parsed.protocol,
+      hostname: parsed.hostname,
+      path: parsed.pathname + parsed.search,
+      method: options.method || 'GET',
+      headers: options.headers || {},
+    }, (response) => {
+      const chunks = [];
+      response.on('data', (chunk) => chunks.push(chunk));
+      response.on('end', () => {
+        const raw = Buffer.concat(chunks).toString('utf8');
+        let data = null;
+        try {
+          data = raw ? JSON.parse(raw) : {};
+        } catch (error) {
+          reject(new Error('Invalid JSON response from GitHub'));
+          return;
+        }
+        if (response.statusCode < 200 || response.statusCode >= 300) {
+          reject(new Error(data.error_description || data.message || `GitHub HTTP ${response.statusCode}`));
+          return;
+        }
+        resolve(data);
+      });
+    });
+    req.on('error', reject);
+    if (body) req.write(body);
+    req.end();
+  });
+}
+
+function getGithubOAuthConfig() {
+  return {
+    clientId: process.env.GITHUB_CLIENT_ID || '',
+    clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
+  };
+}
+
+async function handleGithubUser(req, res) {
+  try {
+    const parsed = new URL(req.url, `http://localhost:${PORT}`);
+    const code = parsed.searchParams.get('code');
+    const config = getGithubOAuthConfig();
+    if (!config.clientId || !config.clientSecret) {
+      sendJson(res, 501, { ok: false, error: 'GitHub OAuth is not configured on this server.' });
+      return;
+    }
+    if (!code) {
+      sendJson(res, 400, { ok: false, error: 'Missing GitHub OAuth code.' });
+      return;
+    }
+
+    const tokenPayload = JSON.stringify({
+      client_id: config.clientId,
+      client_secret: config.clientSecret,
+      code,
+    });
+    const tokenData = await requestJson('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(tokenPayload),
+        'User-Agent': 'mornikar-kprverse-local',
+      },
+    }, tokenPayload);
+    if (!tokenData.access_token) {
+      sendJson(res, 401, { ok: false, error: tokenData.error_description || 'GitHub did not return an access token.' });
+      return;
+    }
+
+    const githubUser = await requestJson('https://api.github.com/user', {
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        'Authorization': `Bearer ${tokenData.access_token}`,
+        'User-Agent': 'mornikar-kprverse-local',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    });
+    sendJson(res, 200, {
+      ok: true,
+      user: {
+        id: githubUser.id,
+        login: githubUser.login,
+        name: githubUser.name || githubUser.login,
+        avatar_url: githubUser.avatar_url,
+        html_url: githubUser.html_url,
+      },
+    });
+  } catch (error) {
+    sendJson(res, 502, { ok: false, error: error.message || 'GitHub OAuth failed.' });
+  }
+}
+
+function serveGithubCallback(res) {
+  res.writeHead(200, {
+    'Content-Type': 'text/html; charset=utf-8',
+    'Cache-Control': 'no-store',
+  });
+  res.end(`<!doctype html><html><head><meta charset="utf-8"><title>GitHub Authorization</title><link rel="stylesheet" href="/_nuxt/github-login.css?v=20260517-auth-v3"></head><body><script src="/_nuxt/github-login.js?v=20260517-auth-v3"></script></body></html>`);
+}
+
+const externalShellTargets = {
+  '/protocol': { label: 'MMO_CMS', url: 'https://mornikar.github.io/admin/' },
+  '/journal': { label: 'Mornikar', url: 'https://mornikar.github.io/' },
+  '/media': { label: 'Portfolio', url: 'https://github.com/mornikar' },
+  '/gallery': { label: 'GALLERY', url: 'https://github.com/mornikar' },
+  '/about': { label: 'ABOUT', url: 'https://github.com/mornikar' },
+  '/mornikar': { label: 'mornikar', url: 'https://github.com/mornikar' },
+  '/bilibili': { label: 'BILIBILI', url: 'https://space.bilibili.com/46336819' },
+  '/opensea-profile': { label: 'OPENSEA', url: 'https://opensea.io/profile' },
+};
+
+function getExternalShellTarget(cleanPath, lookupPath) {
+  return externalShellTargets[cleanPath] || externalShellTargets[lookupPath] || null;
+}
+
+function getQueryShellTarget(cleanPath, requestUrl) {
+  try {
+    const parsed = new URL(requestUrl, `http://localhost:${PORT}`);
+    if (cleanPath === '/protocol' && parsed.searchParams.get('shell') === 'mornikar') {
+      return externalShellTargets['/journal'];
+    }
+  } catch (error) {}
+  return null;
+}
+
+function buildExternalShellInject(shellTarget) {
+  if (!shellTarget || !shellTarget.url) return '';
+  const targetUrl = JSON.stringify(shellTarget.url);
+  const label = JSON.stringify(shellTarget.label || 'External page');
+  return `<style>
+html.mornikar-external-shell,
+html.mornikar-external-shell body {
+  background: #05070c !important;
+  overflow: hidden !important;
+}
+.mornikar-external-shell-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #05070c;
+}
+.mornikar-external-shell-bg iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #fff;
+}
+html.mornikar-external-shell #__nuxt,
+html.mornikar-external-shell #app,
+html.mornikar-external-shell #layout {
+  background: transparent !important;
+  pointer-events: none;
+  position: relative;
+  z-index: 2;
+}
+html.mornikar-external-shell #canvas-container,
+html.mornikar-external-shell #ui-container,
+html.mornikar-external-shell #page,
+html.mornikar-external-shell .widescreen-warning,
+html.mornikar-external-shell .landscape-warning,
+html.mornikar-external-shell [class*="widescreen-warning"],
+html.mornikar-external-shell [class*="landscape-warning"] {
+  display: none !important;
+}
+html.mornikar-external-shell .the-frame .desktop-only,
+html.mornikar-external-shell .the-menu .desktop-only {
+  display: flex !important;
+}
+html.mornikar-external-shell .the-frame .mobile-only,
+html.mornikar-external-shell .the-menu .mobile-only {
+  display: none !important;
+}
+html.mornikar-external-shell .smooth-wrapper,
+html.mornikar-external-shell .smooth-content {
+  background: transparent !important;
+  pointer-events: none;
+}
+html.mornikar-external-shell .the-frame,
+html.mornikar-external-shell [class*="the-frame"],
+html.mornikar-external-shell .the-menu,
+html.mornikar-external-shell [class*="the-menu"],
+html.mornikar-external-shell .btn-burger,
+html.mornikar-external-shell .the-frame-submenu,
+html.mornikar-external-shell .group,
+html.mornikar-external-shell .group.submenu,
+html.mornikar-external-shell .left.flex-col.desktop-only,
+html.mornikar-external-shell .submenu,
+html.mornikar-external-shell #frame-overlays {
+  z-index: 2147483000 !important;
+}
+html.mornikar-external-shell .the-frame {
+  display: flex !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  position: fixed !important;
+}
+html.mornikar-external-shell .the-frame .pin,
+html.mornikar-external-shell .the-frame-layer,
+html.mornikar-external-shell .the-frame-submenu {
+  inset: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+}
+html.mornikar-external-shell .the-frame-submenu {
+  align-items: center !important;
+  display: flex !important;
+  position: relative !important;
+}
+html.mornikar-external-shell .btn-burger,
+html.mornikar-external-shell .group.submenu,
+html.mornikar-external-shell .left.flex-col.desktop-only a,
+html.mornikar-external-shell .left.flex-col.desktop-only button,
+html.mornikar-external-shell .the-menu,
+html.mornikar-external-shell .the-menu * {
+  pointer-events: auto !important;
+}
+html.mornikar-external-shell #widget-login-dropdown,
+html.mornikar-external-shell #widget-login-kpr.gh-modal-overlay {
+  z-index: 2147483002 !important;
+  pointer-events: auto !important;
+}
+</style><script>
+(function mountMornikarExternalShell(){
+  var targetUrl = ${targetUrl};
+  var label = ${label};
+  var intervalId = null;
+  document.documentElement.classList.add('mornikar-external-shell');
+  function normalizeFrameClasses() {
+    var groups = document.querySelectorAll('.the-frame-submenu .group');
+    for (var i = 0; i < groups.length; i += 1) {
+      groups[i].classList.add('submenu');
+    }
+  }
+  function mount() {
+    document.documentElement.classList.add('mornikar-external-shell');
+    normalizeFrameClasses();
+    var existing = document.querySelector('.mornikar-external-shell-bg');
+    if (existing) {
+      var currentFrame = existing.querySelector('iframe');
+      if (currentFrame && currentFrame.getAttribute('src') !== targetUrl) currentFrame.src = targetUrl;
+      return;
+    }
+    var shell = document.createElement('div');
+    shell.className = 'mornikar-external-shell-bg';
+    shell.setAttribute('data-shell-label', label);
+    var frame = document.createElement('iframe');
+    frame.src = targetUrl;
+    frame.title = label + ' background';
+    frame.loading = 'eager';
+    frame.referrerPolicy = 'no-referrer-when-downgrade';
+    shell.appendChild(frame);
+    document.body.insertBefore(shell, document.body.firstChild);
+  }
+  function keepMounted() {
+    mount();
+    if (!intervalId) intervalId = window.setInterval(mount, 1000);
+    if (window.MutationObserver && document.body && !window.__mornikarExternalShellObserver) {
+      window.__mornikarExternalShellObserver = new MutationObserver(mount);
+      window.__mornikarExternalShellObserver.observe(document.body, { childList: true });
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', keepMounted, { once: true });
+  } else {
+    keepMounted();
+  }
+})();
+</script>`;
+}
+
+function buildShellRouteGuardInject() {
+  const externalTargets = JSON.stringify(externalShellTargets);
+  return `<style>
+html.mornikar-external-shell,
+html.mornikar-external-shell body {
+  background: #05070c !important;
+  overflow: hidden !important;
+}
+html.mornikar-external-shell .mornikar-external-shell-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: #05070c;
+}
+html.mornikar-external-shell .mornikar-external-shell-bg iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #fff;
+}
+html.mornikar-external-shell #__nuxt,
+html.mornikar-external-shell #app,
+html.mornikar-external-shell #layout {
+  background: transparent !important;
+  pointer-events: none !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+html.mornikar-external-shell #canvas-container,
+html.mornikar-external-shell #ui-container,
+html.mornikar-external-shell #page,
+html.mornikar-external-shell .widescreen-warning,
+html.mornikar-external-shell .landscape-warning,
+html.mornikar-external-shell [class*="widescreen-warning"],
+html.mornikar-external-shell [class*="landscape-warning"] {
+  display: none !important;
+}
+html.mornikar-external-shell .the-frame .desktop-only,
+html.mornikar-external-shell .the-menu .desktop-only {
+  display: flex !important;
+}
+html.mornikar-external-shell .the-frame .mobile-only,
+html.mornikar-external-shell .the-menu .mobile-only {
+  display: none !important;
+}
+html.mornikar-external-shell .smooth-wrapper,
+html.mornikar-external-shell .smooth-content {
+  background: transparent !important;
+  pointer-events: none !important;
+}
+html.mornikar-external-shell .the-frame,
+html.mornikar-external-shell [class*="the-frame"],
+html.mornikar-external-shell .the-menu,
+html.mornikar-external-shell [class*="the-menu"],
+html.mornikar-external-shell .btn-burger,
+html.mornikar-external-shell .the-frame-submenu,
+html.mornikar-external-shell .group,
+html.mornikar-external-shell .group.submenu,
+html.mornikar-external-shell .left.flex-col.desktop-only,
+html.mornikar-external-shell .submenu,
+html.mornikar-external-shell #frame-overlays {
+  z-index: 2147483000 !important;
+}
+html.mornikar-external-shell .the-frame {
+  display: flex !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  position: fixed !important;
+}
+html.mornikar-external-shell .the-frame .pin,
+html.mornikar-external-shell .the-frame-layer,
+html.mornikar-external-shell .the-frame-submenu {
+  inset: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+}
+html.mornikar-external-shell .the-frame-submenu {
+  align-items: center !important;
+  display: flex !important;
+  position: relative !important;
+}
+html.mornikar-external-shell .btn-burger,
+html.mornikar-external-shell .group.submenu,
+html.mornikar-external-shell .left.flex-col.desktop-only a,
+html.mornikar-external-shell .left.flex-col.desktop-only button,
+html.mornikar-external-shell .the-menu,
+html.mornikar-external-shell .the-menu * {
+  pointer-events: auto !important;
+}
+html.mornikar-external-shell #widget-login-dropdown,
+html.mornikar-external-shell #widget-login-kpr.gh-modal-overlay {
+  z-index: 2147483002 !important;
+  pointer-events: auto !important;
+}
+</style><script>
+(function installMornikarShellRouteGuard(){
+  if (window.__mornikarShellRouteGuardInstalled) return;
+  window.__mornikarShellRouteGuardInstalled = true;
+  var externalTargets = ${externalTargets};
+  var hardRoutes = { '/': true };
+  Object.keys(externalTargets).forEach(function(path) { hardRoutes[path] = true; });
+  function normalizePath(pathname) {
+    if (!pathname) return '/';
+    return pathname !== '/' && pathname.charAt(pathname.length - 1) === '/' ? pathname.slice(0, -1) : pathname;
+  }
+  function shellRouteFromUrl(value) {
+    if (!value) return '';
+    try {
+      var parsed = new URL(value, window.location.href);
+      if (parsed.origin !== window.location.origin) return '';
+      var pathname = normalizePath(parsed.pathname);
+      return hardRoutes[pathname] ? pathname + parsed.search + parsed.hash : '';
+    } catch (error) {
+      var clean = normalizePath(value);
+      return hardRoutes[clean] ? clean : '';
+    }
+  }
+  function currentExternalTarget() {
+    var search = new URLSearchParams(window.location.search || '');
+    if (normalizePath(window.location.pathname) === '/protocol' && search.get('shell') === 'mornikar') {
+      return externalTargets['/journal'];
+    }
+    return externalTargets[normalizePath(window.location.pathname)] || null;
+  }
+  function textOf(element) {
+    return ((element && element.textContent) || '').replace(/\\s+/g, '').toUpperCase();
+  }
+  function shellRouteFromText(element) {
+    var text = textOf(element);
+    if (!text) return '';
+    if (text.indexOf('MORNIKAR') !== -1 || text.indexOf('JOURNAL') !== -1) return '/protocol?shell=mornikar';
+    if (text.indexOf('MMO_CMS') !== -1 || text.indexOf('PROTOCOL') !== -1) return '/protocol';
+    if (text.indexOf('PORTFOLIO') !== -1 || text.indexOf('MEDIA') !== -1 || text.indexOf('KEEPERS') !== -1) return '/media';
+    if (text.indexOf('GALLERY') !== -1) return '/gallery';
+    if (text.indexOf('ABOUT') !== -1) return '/about';
+    if (text.indexOf('HOME') !== -1 || text.indexOf('STORY') !== -1) return '/';
+    return '';
+  }
+  function normalizeFrameClasses() {
+    var groups = document.querySelectorAll('.the-frame-submenu .group');
+    for (var i = 0; i < groups.length; i += 1) groups[i].classList.add('submenu');
+  }
+  function mountExternalShell(target) {
+    if (!target || !target.url || !document.body) return false;
+    document.documentElement.classList.add('mornikar-external-shell');
+    document.documentElement.setAttribute('data-mornikar-active-shell', target.label || '');
+    normalizeFrameClasses();
+    var shell = document.querySelector('.mornikar-external-shell-bg');
+    if (!shell) {
+      shell = document.createElement('div');
+      shell.className = 'mornikar-external-shell-bg';
+      document.body.insertBefore(shell, document.body.firstChild);
+    }
+    shell.setAttribute('data-shell-label', target.label || 'External page');
+    var frame = shell.querySelector('iframe');
+    if (!frame) {
+      frame = document.createElement('iframe');
+      frame.loading = 'eager';
+      frame.referrerPolicy = 'no-referrer-when-downgrade';
+      shell.appendChild(frame);
+    }
+    frame.title = (target.label || 'External page') + ' background';
+    if (frame.getAttribute('src') !== target.url) frame.setAttribute('src', target.url);
+    return true;
+  }
+  function syncExternalShell() {
+    var target = currentExternalTarget();
+    if (target) {
+      if (!mountExternalShell(target)) {
+        window.setTimeout(syncExternalShell, 30);
+      }
+    }
+  }
+  function patchRouteAnchors() {
+    var links = document.querySelectorAll('a[href]');
+    for (var i = 0; i < links.length; i += 1) {
+      var route = shellRouteFromUrl(links[i].getAttribute('href'));
+      if (!route) continue;
+      links[i].setAttribute('data-mornikar-jump-url', route);
+      links[i].setAttribute('target', '_self');
+      links[i].setAttribute('rel', 'noopener noreferrer');
+      links[i].style.pointerEvents = 'auto';
+      links[i].style.cursor = 'pointer';
+    }
+  }
+  function hardNavigate(route) {
+    if (!route) return;
+    var current = window.location.pathname + window.location.search + window.location.hash;
+    if (route === current) {
+      syncExternalShell();
+      return;
+    }
+    document.documentElement.setAttribute('data-mornikar-last-shell-route', route);
+    window.setTimeout(function(){
+      window.location.href = route;
+      window.setTimeout(function(){
+        if ((window.location.pathname + window.location.search + window.location.hash) !== route) {
+          window.location.assign(route);
+        }
+      }, 80);
+    }, 0);
+  }
+  function guardClick(event) {
+    var target = event.target;
+    var jump = target && target.closest && target.closest('[data-mornikar-jump-url]');
+    var link = target && target.closest && target.closest('a[href]');
+    var label = target && target.closest && target.closest('a,button,.menu-nav-item,.link,.hacky-text,.animation');
+    var route = jump && jump.getAttribute('data-mornikar-jump-url');
+    if (!route && link) route = shellRouteFromUrl(link.getAttribute('href'));
+    if (!route && label) route = shellRouteFromText(label);
+    if (!route) return;
+    event.preventDefault();
+    if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+    event.stopPropagation();
+    hardNavigate(route);
+  }
+  function guardHistoryRoute() {
+    var route = shellRouteFromUrl(window.location.href);
+    if (!route) return;
+    window.setTimeout(syncExternalShell, 0);
+  }
+  window.addEventListener('click', guardClick, true);
+  document.addEventListener('click', guardClick, true);
+  document.documentElement.setAttribute('data-mornikar-shell-route-guard', 'true');
+  var originalPushState = history.pushState;
+  var originalReplaceState = history.replaceState;
+  history.pushState = function() {
+    var result = originalPushState.apply(this, arguments);
+    guardHistoryRoute();
+    return result;
+  };
+  history.replaceState = function() {
+    var result = originalReplaceState.apply(this, arguments);
+    guardHistoryRoute();
+    return result;
+  };
+  window.addEventListener('popstate', syncExternalShell);
+  window.addEventListener('pageshow', syncExternalShell);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function(){
+      patchRouteAnchors();
+      syncExternalShell();
+    });
+  } else {
+    patchRouteAnchors();
+    syncExternalShell();
+  }
+  window.setInterval(function(){
+    patchRouteAnchors();
+    syncExternalShell();
+  }, 250);
+})();
+</script>`;
+}
+
 function serveLocal(urlPath, res) {
   // Strip query string for file lookup
   const cleanPath = urlPath.split('?')[0];
-  const filePath = path.join(ROOT, cleanPath);
+  const routeShellAliases = {
+    '/mornikar': '/journal',
+    '/bilibili': '/journal',
+    '/opensea-profile': '/journal',
+  };
+  const lookupPath = routeShellAliases[cleanPath] || cleanPath;
+  const externalShellTarget = getQueryShellTarget(cleanPath, urlPath) || getExternalShellTarget(cleanPath, lookupPath);
+  const shellTemplatePath = externalShellTarget ? '/protocol' : lookupPath;
+  const externalShellInject = buildExternalShellInject(externalShellTarget);
+  const filePath = path.join(ROOT, shellTemplatePath);
   
   // Security: prevent path traversal
   if (!filePath.startsWith(ROOT)) {
@@ -293,11 +867,12 @@ function serveLocal(urlPath, res) {
   }
 
   const ext = path.extname(filePath).toLowerCase();
-  const contentType = mimeTypes[ext] || 'application/octet-stream';
+  const isHtmlFile = ext === '.html' || ext === '';
+  const contentType = isHtmlFile ? mimeTypes['.html'] : (mimeTypes[ext] || 'application/octet-stream');
   
   // For HTML files, inject CORS fix script + patch __NUXT__ data from site-config.json
-  if (ext === '.html') {
-    let content = fs.readFileSync(filePath, 'utf8');
+  if (isHtmlFile) {
+    let content = disableLegacyKprLoginWidget(stripMornikarStaticBoot(fs.readFileSync(filePath, 'utf8')));
 
     // ── Server-side __NUXT__ patching ──
     // Read site-config.json and replace strings directly in the __NUXT__ payload.
@@ -306,6 +881,24 @@ function serveLocal(urlPath, res) {
       const configPath = path.join(ROOT, 'site-config.json');
       const configData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
       content = patchNuxtHtml(content, configData);
+      [
+        ['>Story<', '>Home<'],
+        ['>Journal<', '>Mornikar<'],
+        ['href="/journal"', 'href="/protocol?shell=mornikar"'],
+        ['>Protocol<', '>MMO_CMS<'],
+        ['>Media<', '>Portfolio<'],
+        ['>Careers<', '>mornikar<'],
+        ['href="https://kpr.homerun.co/?lang=en"', 'href="/mornikar"'],
+        ['>Twitter<', '>BILIBILI<'],
+        ['href="https://twitter.com/KPRVERSE"', 'href="/bilibili"'],
+        ['href="https://twitter.com/kprverse"', 'href="/bilibili"'],
+        ['>Discord<', '>BILIBILI<'],
+        ['href="https://discord.com/invite/kpr"', 'href="/bilibili"'],
+        ['>OpenSea<', '>OPENSEA<'],
+        ['href="https://opensea.io/collection/kprverse"', 'href="/opensea-profile"'],
+      ].forEach(([from, to]) => {
+        content = content.split(from).join(to);
+      });
       if (configData.footer && configData.footer.press_email) {
         content = content.split('HELLO@KPRVERSE.COM').join(configData.footer.press_email);
         content = content.split('hello@kprverse.com').join(configData.footer.press_email);
@@ -342,7 +935,10 @@ function serveLocal(urlPath, res) {
       }
     } catch(e) {}
 
-    const profileCardsInject = '<link rel="stylesheet" href="/profile-cards.css?v=reactbits-hero-mask"><script>(function(){function loadProfileCards(){setTimeout(function(){if(document.querySelector("script[data-mornikar-profile-cards]"))return;var s=document.createElement("script");s.src="/profile-cards.js?v=reactbits-hero-mask";s.defer=true;s.dataset.mornikarProfileCards="true";document.body.appendChild(s);},3000)}if(document.readyState==="complete"){loadProfileCards()}else{window.addEventListener("load",loadProfileCards,{once:true})}})();</script>';
+    const shellRouteGuardInject = buildShellRouteGuardInject();
+    content = content.replace('<head>', '<head>' + shellRouteGuardInject);
+    const githubLoginInject = '<link rel="stylesheet" href="/_nuxt/github-login.css?v=20260517-auth-v3"><script defer src="/_nuxt/github-login.js?v=20260517-auth-v3"></script>';
+    const profileCardsInject = '<link rel="stylesheet" href="/profile-cards.css?v=reactbits-home-timeline-v17"><script>(function(){function loadProfileCards(){setTimeout(function(){if(document.querySelector("script[data-mornikar-profile-cards]"))return;var s=document.createElement("script");s.src="/profile-cards.js?v=reactbits-home-timeline-v17";s.defer=true;s.dataset.mornikarProfileCards="true";document.body.appendChild(s);},500)}if(document.readyState==="complete"){loadProfileCards()}else{window.addEventListener("load",loadProfileCards,{once:true})}})();</script>';
 
     const inject = `<script>
 // KPR-PROXY: Rewrite S3 font URLs to local proxy to avoid CORS
@@ -364,7 +960,7 @@ function serveLocal(urlPath, res) {
 })();
 </script>
 ${ENABLE_DIAG ? '<script>\n(function runDiagnostic() {\n  function doit() {\n    try {\n      var info = "DIAG v3 | ";\n      var nuxt = window.__NUXT__;\n      info += "__NUXT__:" + (nuxt ? "OK" : "MISSING") + " | ";\n      if (nuxt && nuxt.data && nuxt.data["us-en/"] && nuxt.data["us-en/"].content) {\n        var b = nuxt.data["us-en/"].content.body;\n        if (b && b[3]) info += "Col:\\"" + b[3].Collection_Name + "\" | ";\n      }\n      var bodyText = (document.body && document.body.innerText) || "";\n      info += "DOM-KPR:" + (bodyText.indexOf("KPR") !== -1) + " DOM-Morn:" + (bodyText.indexOf("Mornikar") !== -1);\n      console.log("[DIAG]", info);\n      var bar = document.createElement("div");\n      bar.style.cssText = "position:fixed;bottom:4px;right:4px;z-index:999999;background:rgba(0,0,0,0.7);color:#0f0;padding:3px 8px;font-size:10px;font-family:monospace;border-radius:4px;cursor:pointer;";\n      bar.textContent = info;\n      bar.onclick = function() { bar.style.display = "none"; };\n      document.body.appendChild(bar);\n    } catch(e) { console.error("DIAG ERR:", e); }\n  }\n  setTimeout(doit, 4000);\n})();\n</script>' : ''}`;
-    const injected = content.replace('</head>', cardScaleStyle + profileCardsInject + inject + '</head>');
+    const injected = content.replace('</head>', cardScaleStyle + externalShellInject + githubLoginInject + profileCardsInject + inject + '</head>');
     res.writeHead(200, {
       'Content-Type': contentType,
       'Access-Control-Allow-Origin': '*',
@@ -388,6 +984,22 @@ ${ENABLE_DIAG ? '<script>\n(function runDiagnostic() {\n  function doit() {\n   
     // KPR's Ys class has nextItemDuration:Xt?1.6:.8 (0.8s on desktop).
     // We override it with the carouselInterval from site-config.json.
     // Also inject hover pause: when #collection-gallery is hovered, loopCards skips.
+    if (cleanPath.includes('hacky-text.') && cleanPath.endsWith('.js')) {
+      try {
+        let jsContent = fs.readFileSync(filePath, 'utf8');
+        const hackyTextOrig = 'j=H.value.innerText,w=j.split("\\n");for(let e of w)I+=e.length;O.value=""';
+        const hackyTextPatched = 'j=(function(e){const t={"STORY":"Home","HOME":"Home","JOURNAL":"Mornikar","PROTOCOL":"MMO_CMS","MEDIA":"Portfolio","KEEPERS":"Portfolio","PORTFOLIO":"Portfolio","CAREERS":"mornikar","GITHUB":"mornikar","TWITTER":"BILIBILI","DISCORD":"BILIBILI","OPENSEA":"OPENSEA","OPEN SEA":"OPENSEA"};const a=(e||"").replace(/\\s+/g," ").trim().toUpperCase();return t[a]||e})(H.value.innerText),H.value.innerText=j,w=j.split("\\n"),I=0;for(let e of w)I+=e.length;O.value=""';
+        if (jsContent.includes(hackyTextOrig) && !jsContent.includes('const t={"JOURNAL":"Mornikar"')) {
+          jsContent = jsContent.replace(hackyTextOrig, hackyTextPatched);
+          console.log('[server] hacky-text.js patched: rollover text map applied before animation cache');
+        }
+        res.end(jsContent);
+        return true;
+      } catch(e) {
+        console.warn('[server] hacky-text.js patch failed, serving original:', e.message);
+      }
+    }
+
     if (cleanPath.includes('Home.') && cleanPath.endsWith('.js')) {
       try {
         const configPath = path.join(ROOT, 'site-config.json');
@@ -486,6 +1098,23 @@ ${ENABLE_DIAG ? '<script>\n(function runDiagnostic() {\n  function doit() {\n   
 
 
         // ── Patch 8: Collection mediaWrap image (face-traits) replacement ──
+        // Patch 6b: ProfileCard host inside ProjectIntro.
+        // Keep the card in the Home component template, then add the host to
+        // ProjectIntro.setupTimeline() so it enters/leaves with the native GSAP flow.
+        const profileCardSlotOrig = '<div\n          data-ui="hero"\n          class="homeProjectIntro__hero"\n        ></div>';
+        const profileCardSlotPatched = profileCardSlotOrig + '\n        <div\n          data-ui="profileCard"\n          class="homeProjectIntro__profileCard"\n        ></div>';
+        if (jsContent.includes(profileCardSlotOrig) && !jsContent.includes('homeProjectIntro__profileCard')) {
+          jsContent = jsContent.replace(profileCardSlotOrig, profileCardSlotPatched);
+          console.log('[server] Home.js patched: ProjectIntro profileCard data-ui host inserted');
+        }
+
+        const projectIntroAnimElsOrig = 'this.animEls=[...this.title.lines,this.ui.img1];const e=this.tl=i.timeline()';
+        const projectIntroAnimElsPatched = 'this.animEls=[...this.title.lines,this.ui.img1,this.ui.profileCard].filter(Boolean);const e=this.tl=i.timeline()';
+        if (jsContent.includes(projectIntroAnimElsOrig) && !jsContent.includes('this.ui.profileCard].filter(Boolean)')) {
+          jsContent = jsContent.replace(projectIntroAnimElsOrig, projectIntroAnimElsPatched);
+          console.log('[server] Home.js patched: ProjectIntro profileCard joined native animEls timeline');
+        }
+
         // Replaces the <img class="mediaEl"> src in lit-html template
         // Original: src="${U}collection/face-traits.webp"
         const mediaElPattern = /src="\$\{U\}collection\/face-traits\.webp"/;
@@ -600,6 +1229,18 @@ ${ENABLE_DIAG ? '<script>\n(function runDiagnostic() {\n  function doit() {\n   
 
   // JSON files (site-config.json etc.) — no-cache to avoid stale config
   if (ext === '.json') {
+    res.writeHead(200, {
+      'Content-Type': contentType,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+    });
+    fs.createReadStream(filePath).pipe(res);
+    return true;
+  }
+
+  if (cleanPath === '/profile-cards.css' || cleanPath === '/profile-cards.js') {
     res.writeHead(200, {
       'Content-Type': contentType,
       'Access-Control-Allow-Origin': '*',
@@ -868,6 +1509,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  const requestSearch = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
   let urlPath = req.url.split('?')[0];
 
   // ── Bilibili video preview proxy ──
@@ -883,6 +1525,26 @@ const server = http.createServer((req, res) => {
   }
 
   // ── site-config.json patch APIs ──
+  if (req.method === 'GET' && urlPath === '/auth/github/config') {
+    const config = getGithubOAuthConfig();
+    sendJson(res, 200, {
+      clientId: config.clientId,
+      configured: !!(config.clientId && config.clientSecret),
+      scopes: 'read:user user:email',
+    });
+    return;
+  }
+
+  if (req.method === 'GET' && urlPath === '/auth/github/user') {
+    handleGithubUser(req, res);
+    return;
+  }
+
+  if (req.method === 'GET' && urlPath === '/auth/github/callback') {
+    serveGithubCallback(res);
+    return;
+  }
+
   const siteConfigPath = path.join(ROOT, 'site-config.json');
 
   // GET /api/config — read site-config.json
@@ -1054,7 +1716,7 @@ const server = http.createServer((req, res) => {
   }
 
   // Try local file first
-  if (serveLocal(urlPath, res)) {
+  if (serveLocal(urlPath + requestSearch, res)) {
     return;
   }
 

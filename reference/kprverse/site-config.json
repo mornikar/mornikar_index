@@ -81,16 +81,16 @@
     "nav_title": "Navigate",
     "social_title": "Connect",
     "items": [
-      { "label": "Story", "url": "us-en/" },
+      { "label": "Home", "url": "/" },
       { "label": "MMO_CMS", "url": "https://mornikar.github.io/admin/" },
       { "label": "Mornikar", "url": "https://mornikar.github.io/" },
-      { "label": "Media", "url": "us-en/media" },
+      { "label": "Portfolio", "url": "us-en/media" },
       { "label": "Gallery", "url": "us-en/gallery" },
       { "label": "About", "url": "us-en/about" }
     ],
     "social_links": [
-      { "label": "Twitter", "url": "" },
-      { "label": "Discord", "url": "" }
+      { "label": "BILIBILI", "url": "https://space.bilibili.com/46336819" },
+      { "label": "BILIBILI", "url": "https://space.bilibili.com/46336819" }
     ]
   },
   "footer": {
@@ -105,9 +105,9 @@
     "console": "// initializing\nnew projects loaded\n\n    ai_assistant_v2.js\n    wiki_platform.ts\n\nactivate console for details...",
     "copyright": "© 2024",
     "nav_items": [
-      { "label": "Story", "url": "us-en/" },
+      { "label": "Home", "url": "/" },
       { "label": "Mornikar", "url": "https://mornikar.github.io/" },
-      { "label": "Media", "url": "us-en/media" },
+      { "label": "Portfolio", "url": "us-en/media" },
       { "label": "Gallery", "url": "us-en/gallery" },
       { "label": "About", "url": "us-en/about" },
       { "label": "mornikar", "url": "https://github.com/mornikar" }
@@ -119,9 +119,9 @@
     ]
   },
   "social": {
-    "twitter": "https://twitter.com/kprverse",
+    "twitter": "https://space.bilibili.com/46336819",
     "instagram": "https://instagram.com/kpr.verse",
-    "discord": "https://discord.com/invite/kpr"
+    "discord": "https://space.bilibili.com/46336819"
   },
   "images": [
     {
@@ -217,6 +217,26 @@
     {
       "original": "Download Brand Book",
       "replacement": "Download Resume"
+    },
+    {
+      "original": "Journal",
+      "replacement": "Mornikar"
+    },
+    {
+      "original": "Protocol",
+      "replacement": "MMO_CMS"
+    },
+    {
+      "original": "Careers",
+      "replacement": "mornikar"
+    },
+    {
+      "original": "Twitter",
+      "replacement": "BILIBILI"
+    },
+    {
+      "original": "Discord",
+      "replacement": "BILIBILI"
     }
   ],
   "gallery": {

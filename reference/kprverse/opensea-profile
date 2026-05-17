@@ -2,7 +2,7 @@
 <html >
 <head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-<title>KPR | Journal</title>
+<title>OPENSEA | Mornikar</title>
 <meta name="description" content>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@title">
@@ -74,10 +74,10 @@
 <!-- MORNIKAR_STATIC_BOOT_START -->
 <link rel="stylesheet" href="/_nuxt/github-login.css?v=20260517-auth-v3">
 <script defer src="/_nuxt/github-login.js?v=20260517-auth-v3"></script>
-<meta name="mornikar-external-shell-label" content="Mornikar">
-<meta name="mornikar-external-shell-url" content="https://mornikar.github.io/">
+<meta name="mornikar-external-shell-label" content="OPENSEA">
+<meta name="mornikar-external-shell-url" content="https://opensea.io/profile">
 <link rel="stylesheet" href="/mornikar-static-shell.css?v=20260517-static-shell-v3">
-<script>window.MORNIKAR_EXTERNAL_SHELL={"label":"Mornikar","url":"https://mornikar.github.io/"};</script>
+<script>window.MORNIKAR_EXTERNAL_SHELL={"label":"OPENSEA","url":"https://opensea.io/profile"};</script>
 <script defer src="/mornikar-static-shell.js?v=20260517-static-shell-v3"></script>
 <link rel="stylesheet" href="/profile-cards.css?v=reactbits-home-timeline-v17">
 <script defer src="/profile-cards.js?v=reactbits-home-timeline-v17"></script>

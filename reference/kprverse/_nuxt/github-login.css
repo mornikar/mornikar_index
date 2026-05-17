@@ -9,6 +9,19 @@
   gap: 8px;
 }
 
+#widget-login-dropdown .login-btn:not(.gh-login-btn),
+#widget-login-dropdown .widget-kpr,
+#widget-login-dropdown iframe,
+#widget-login-kpr:not(.gh-modal-overlay) {
+  display: none !important;
+}
+
+html.mornikar-external-shell #widget-login-dropdown,
+html.mornikar-external-shell #widget-login-kpr.gh-modal-overlay {
+  z-index: 2147483002 !important;
+  pointer-events: auto !important;
+}
+
 /* Sign In Button */
 .gh-login-btn {
   display: flex;
@@ -160,6 +173,15 @@
   color: #ff5566;
 }
 
+.gh-menu-primary {
+  color: #00d4ff;
+}
+
+.gh-menu-primary:hover {
+  background: rgba(0, 212, 255, 0.08);
+  color: #6ee8ff;
+}
+
 /* ── Login Modal ── */
 #widget-login-kpr.gh-modal-overlay {
   position: fixed;
@@ -290,6 +312,26 @@
   font-size: 11px;
   color: #ff3344;
   opacity: 0.8;
+}
+
+html.mornikar-auth-lock .mornikar-external-shell-bg iframe {
+  visibility: hidden !important;
+}
+
+html.mornikar-auth-lock .mornikar-external-shell-bg {
+  background: #05070c !important;
+}
+
+.gh-callback-message {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #05070c;
+  color: #fff;
+  font-family: 'IBMPlexMono', 'JetBrains Mono', monospace;
+  font-size: 13px;
+  letter-spacing: 0.02em;
 }
 
 /* Spinner */
