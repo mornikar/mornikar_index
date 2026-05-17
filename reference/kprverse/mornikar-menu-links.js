@@ -33,7 +33,9 @@
   };
 
   function normalizeMenuRoute(url) {
-    return url === '/journal' ? '/protocol?shell=mornikar' : url;
+    if (url === '/journal') return '/protocol?shell=mornikar';
+    if (url.indexOf('/mornikar') === 0) return '/Mornikar/';
+    return url;
   }
 
   function shellRouteFromHref(href) {
@@ -148,8 +150,8 @@
     patchLabelByText('PORTFOLIO', 'Portfolio', '/media', { matchNext: true, caseSensitiveNext: true });
     patchLabelByText('GALLERY', 'GALLERY', '/gallery', { matchNext: true });
     patchLabelByText('ABOUT', 'ABOUT', '/about', { matchNext: true });
-    patchLabelByText('GITHUB', 'mornikar', '/mornikar', { matchNext: true, caseSensitiveNext: true });
-    patchLabelByText('CAREERS', 'mornikar', '/mornikar', { matchNext: true, caseSensitiveNext: true });
+    patchLabelByText('GITHUB', 'mornikar', '/Mornikar/', { matchNext: true, caseSensitiveNext: true });
+    patchLabelByText('CAREERS', 'mornikar', '/Mornikar/', { matchNext: true, caseSensitiveNext: true });
     patchLabelByText('TWITTER', 'BILIBILI', '/bilibili', { matchNext: true });
     patchLabelByText('DISCORD', 'BILIBILI', '/bilibili', { matchNext: true });
     patchLabelByText('OPENSEA', 'OPENSEA', '/opensea-profile', { matchNext: true });
