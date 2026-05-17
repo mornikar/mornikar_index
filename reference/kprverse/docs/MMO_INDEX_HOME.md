@@ -67,3 +67,8 @@ GitHub Pages 根站必须能直接访问以下资源：
 3. 点击或访问 `/protocol?shell=mornikar`，确认进入 Mornikar shell，iframe 目标是 `/Mornikar/`。
 4. 检查 `/_nuxt/` 资源没有被 404。
 5. 线上部署后打开 `https://mornikar.github.io/`，确认不是旧 Hexo 首页。
+## GitHub Pages 路由发布补充
+
+源码目录保留 KPR 镜像生成的无扩展 HTML 文件，例如 `protocol`、`media`、`legal/privacy-policy`。发布到 `mornikar.github.io` 的 `gh-pages` 根目录时，需要转换为 `protocol/index.html`、`media/index.html`、`legal/privacy-policy/index.html`，否则 GitHub Pages 会以 `application/octet-stream` 返回无扩展文件。
+
+Windows 下不能同时存在小写 `mornikar` 文件和大写 `Mornikar/` 目录。线上以 `/Mornikar/` 为准，旧 `/mornikar` 入口由 `mornikar-menu-links.js` 归一到 `/Mornikar/`。
