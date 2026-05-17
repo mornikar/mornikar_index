@@ -1,5 +1,5 @@
 {
-  "name": "kprverse-static",
+  "name": "mmo-index",
   "private": true,
   "scripts": {
     "build:components": "vite build"

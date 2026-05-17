@@ -25,8 +25,8 @@
 
 ```js
 const externalShellTargets = {
-  '/protocol': { label: 'MMO_CMS', url: 'https://mornikar.github.io/admin/' },
-  '/journal': { label: 'Mornikar', url: 'https://mornikar.github.io/' },
+  '/protocol': { label: 'MMO_CMS', url: 'https://mornikar.github.io/Mornikar/admin/' },
+  '/journal': { label: 'Mornikar', url: 'https://mornikar.github.io/Mornikar/' },
   '/media': { label: 'Portfolio', url: 'https://github.com/mornikar' },
   '/gallery': { label: 'GALLERY', url: 'https://github.com/mornikar' },
   '/about': { label: 'ABOUT', url: 'https://github.com/mornikar' },
@@ -38,8 +38,8 @@ const externalShellTargets = {
 
 重要特例：
 
-- `MMO_CMS` 走 `/protocol`，iframe 是 `https://mornikar.github.io/admin/`。
-- `MORNIKAR` 最终改为走 `/protocol?shell=mornikar`，复用 MMO_CMS 成功的 protocol 外框模板，但 iframe 切到 `https://mornikar.github.io/`。
+- `MMO_CMS` 走 `/protocol`，iframe 是 `https://mornikar.github.io/Mornikar/admin/`。
+- `MORNIKAR` 最终改为走 `/protocol?shell=mornikar`，复用 MMO_CMS 成功的 protocol 外框模板，但 iframe 切到 `https://mornikar.github.io/Mornikar/`。
 
 这样做是因为 KPR/Nuxt 对 `/journal` 有原生页面逻辑，容易被 SPA 内部路由吃掉；而 `/protocol` 外框模板已经验证稳定。
 
@@ -133,12 +133,12 @@ patchLabelByText('OLD_TEXT', 'NEW_PAGE', '/new-page', { matchNext: true });
 `MMO_CMS` 是受 GitHub 授权保护的入口：
 
 - 目标路由：`/protocol`
-- iframe：`https://mornikar.github.io/admin/`
+- iframe：`https://mornikar.github.io/Mornikar/admin/`
 - 未授权点击 `/protocol` 时，`github-login.js` 会拦截，保存待跳转地址到 `sessionStorage.mornikar_auth_pending_redirect`，并打开 GitHub 登录弹窗。
 - 授权成功后，脚本读取 pending redirect，继续跳到 `/protocol`。
 - `/protocol?shell=mornikar` 是 MORNIKAR 外站页，不需要 MMO_CMS 授权。
 
-当前授权验证是在 KPR shell 层完成的。若未来 MMO_CMS 本体也要验证同一个授权，需要在 `https://mornikar.github.io/admin/` 中实现自己的 GitHub session/token 验证，或接入同一个后端 OAuth session。
+当前授权验证是在 KPR shell 层完成的。若未来 MMO_CMS 本体也要验证同一个授权，需要在 `https://mornikar.github.io/Mornikar/admin/` 中实现自己的 GitHub session/token 验证，或接入同一个后端 OAuth session。
 
 ## 7. GitHub OAuth 配置
 

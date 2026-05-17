@@ -75,9 +75,9 @@
 <link rel="stylesheet" href="/_nuxt/github-login.css?v=20260517-auth-v3">
 <script defer src="/_nuxt/github-login.js?v=20260517-auth-v3"></script>
 <meta name="mornikar-external-shell-label" content="Mornikar">
-<meta name="mornikar-external-shell-url" content="https://mornikar.github.io/">
+<meta name="mornikar-external-shell-url" content="https://mornikar.github.io/Mornikar/">
 <link rel="stylesheet" href="/mornikar-static-shell.css?v=20260517-static-shell-v3">
-<script>window.MORNIKAR_EXTERNAL_SHELL={"label":"Mornikar","url":"https://mornikar.github.io/"};</script>
+<script>window.MORNIKAR_EXTERNAL_SHELL={"label":"Mornikar","url":"https://mornikar.github.io/Mornikar/"};</script>
 <script defer src="/mornikar-static-shell.js?v=20260517-static-shell-v3"></script>
 <link rel="stylesheet" href="/profile-cards.css?v=reactbits-home-timeline-v17">
 <script defer src="/profile-cards.js?v=reactbits-home-timeline-v17"></script>

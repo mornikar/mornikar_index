@@ -1,6 +1,6 @@
-# KPR Verse 本地镜像 — 说明文档
+# MMO_index 首页 — 说明文档
 
-> kprverse.com 的完整本地镜像，用于参考学习其 Web 交互与视觉实现。
+> 原 KPR Verse 本地镜像已经改造为 `MMO_index`，作为 `https://mornikar.github.io/` 的首页入口。本文保留原镜像的技术说明、踩坑记录与维护经验，用作实现介绍；首页入口、菜单跳转和部署说明见 [MMO_index 首页说明](docs/MMO_INDEX_HOME.md)。
 
 ## 🏗️ 技术栈
 

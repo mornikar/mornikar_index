@@ -186,8 +186,8 @@ the-footer
 
 `profile-cards.js` 还负责运行时调整三个导航入口：
 
-- 文本 `Journal` / `JOURNAL` -> `Mornikar`，点击跳转 `https://mornikar.github.io/`
-- `.menu-nav-item.pointer-events-auto` 中优先命中的 `Protocol` / `Media` / `Gallery` -> `MMO_CMS`，点击跳转 `https://mornikar.github.io/admin/`
+- 文本 `Journal` / `JOURNAL` -> `Mornikar`，点击跳转 `https://mornikar.github.io/Mornikar/`
+- `.menu-nav-item.pointer-events-auto` 中优先命中的 `Protocol` / `Media` / `Gallery` -> `MMO_CMS`，点击跳转 `https://mornikar.github.io/Mornikar/admin/`
 - footer social 区第一项 -> `mornikar`，点击跳转 `https://github.com/mornikar`
 
 这些入口通过 `patchTextLinks()` 在 DOM 出现后反复尝试 patch，原因是 Nuxt 的 hacky-text 会晚于页面 HTML 出现。`site-config.json` 中也同步改了 nav/footer 配置，避免后续维护时看到旧配置。

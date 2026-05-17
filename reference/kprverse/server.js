@@ -415,8 +415,8 @@ function serveGithubCallback(res) {
 }
 
 const externalShellTargets = {
-  '/protocol': { label: 'MMO_CMS', url: 'https://mornikar.github.io/admin/' },
-  '/journal': { label: 'Mornikar', url: 'https://mornikar.github.io/' },
+  '/protocol': { label: 'MMO_CMS', url: 'https://mornikar.github.io/Mornikar/admin/' },
+  '/journal': { label: 'Mornikar', url: 'https://mornikar.github.io/Mornikar/' },
   '/media': { label: 'Portfolio', url: 'https://github.com/mornikar' },
   '/gallery': { label: 'GALLERY', url: 'https://github.com/mornikar' },
   '/about': { label: 'ABOUT', url: 'https://github.com/mornikar' },

@@ -8,8 +8,8 @@
     "changelog": "v1.2.0 — 恢复所有 Mornikar 文字替换配置（从 backup-20260505-mornikar 合并），gallery 参数保留当前值"
   },
   "site": {
-    "title": "Mornikar | Portfolio",
-    "description": "Mornikar - Developer Portfolio & Creative Showcase",
+    "title": "MMO_index",
+    "description": "MMO_index - Mornikar root index and project navigation shell",
     "url": "https://mornikar.github.io",
     "ogImage": "/og.jpg"
   },
@@ -82,8 +82,8 @@
     "social_title": "Connect",
     "items": [
       { "label": "Home", "url": "/" },
-      { "label": "MMO_CMS", "url": "https://mornikar.github.io/admin/" },
-      { "label": "Mornikar", "url": "https://mornikar.github.io/" },
+      { "label": "MMO_CMS", "url": "https://mornikar.github.io/Mornikar/admin/" },
+      { "label": "Mornikar", "url": "https://mornikar.github.io/Mornikar/" },
       { "label": "Portfolio", "url": "us-en/media" },
       { "label": "Gallery", "url": "us-en/gallery" },
       { "label": "About", "url": "us-en/about" }
@@ -106,7 +106,7 @@
     "copyright": "© 2024",
     "nav_items": [
       { "label": "Home", "url": "/" },
-      { "label": "Mornikar", "url": "https://mornikar.github.io/" },
+      { "label": "Mornikar", "url": "https://mornikar.github.io/Mornikar/" },
       { "label": "Portfolio", "url": "us-en/media" },
       { "label": "Gallery", "url": "us-en/gallery" },
       { "label": "About", "url": "us-en/about" },

@@ -10,7 +10,7 @@
     var params = new URLSearchParams(window.location.search || '');
     var pathname = window.location.pathname.replace(/\/$/, '') || '/';
     if ((pathname === '/protocol' || /\/protocol$/.test(pathname)) && params.get('shell') === 'mornikar') {
-      targetUrl = 'https://mornikar.github.io/';
+      targetUrl = 'https://mornikar.github.io/Mornikar/';
       label = 'Mornikar';
       window.MORNIKAR_EXTERNAL_SHELL = { label: label, url: targetUrl };
     }
