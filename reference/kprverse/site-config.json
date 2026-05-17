@@ -84,9 +84,9 @@
       { "label": "Home", "url": "/" },
       { "label": "MMO_CMS", "url": "https://mornikar.github.io/Mornikar/admin/" },
       { "label": "Mornikar", "url": "https://mornikar.github.io/Mornikar/" },
-      { "label": "Portfolio", "url": "us-en/media" },
-      { "label": "Gallery", "url": "us-en/gallery" },
-      { "label": "About", "url": "us-en/about" }
+      { "label": "Portfolio", "url": "/media" },
+      { "label": "Gallery", "url": "/gallery" },
+      { "label": "About", "url": "/about" }
     ],
     "social_links": [
       { "label": "BILIBILI", "url": "https://space.bilibili.com/46336819" },
@@ -107,15 +107,15 @@
     "nav_items": [
       { "label": "Home", "url": "/" },
       { "label": "Mornikar", "url": "https://mornikar.github.io/Mornikar/" },
-      { "label": "Portfolio", "url": "us-en/media" },
-      { "label": "Gallery", "url": "us-en/gallery" },
-      { "label": "About", "url": "us-en/about" },
+      { "label": "Portfolio", "url": "/media" },
+      { "label": "Gallery", "url": "/gallery" },
+      { "label": "About", "url": "/about" },
       { "label": "mornikar", "url": "https://github.com/mornikar" }
     ],
     "legal_items": [
-      { "label": "Privacy Policy", "url": "us-en/legal/privacy-policy" },
-      { "label": "Terms of Service", "url": "us-en/legal/terms-of-service" },
-      { "label": "Legal License", "url": "us-en/legal/legal-license" }
+      { "label": "Privacy Policy", "url": "/legal/privacy-policy" },
+      { "label": "Terms of Service", "url": "/legal/terms-of-service" },
+      { "label": "Legal License", "url": "/legal/legal-license" }
     ]
   },
   "social": {
