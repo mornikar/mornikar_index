@@ -387,7 +387,7 @@
         // Create auto-playing video background
         var video = document.createElement('video');
         video.className = 'kpr-v-bg';
-        video.src = '/api/bilibili/preview/' + v.bvid;
+        video.src = v.src || v.previewSrc || ('/api/bilibili/preview/' + v.bvid);
         video.muted = true;
         video.autoplay = true;
         video.playsInline = true;

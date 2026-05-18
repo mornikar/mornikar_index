@@ -245,7 +245,8 @@
         "selector": ".collectionGallery__item",
         "bvid": "BV1jymLBsENj",
         "label": "AI PM Skills Demo",
-        "cardIndex": 0
+        "cardIndex": 0,
+        "src": "/videos/collection/OBJECT-FX_001_CLEAN_1-vp9-chrome.webm"
       }
     ],
     "cardScale": 1.2,
