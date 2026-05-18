@@ -179,7 +179,241 @@
     }
 
     // ========================================
-    // INIT ALL AFTER LOADER
+    // CAROUSEL SYSTEM
+    // ========================================
+    function initCarousel() {
+        const carousel = document.querySelector('.carousel-container');
+        if (!carousel) return;
+
+        const track = carousel.querySelector('.carousel-track');
+        const slides = carousel.querySelectorAll('.carousel-slide');
+        const dots = carousel.querySelectorAll('.dot');
+        const prevBtn = carousel.querySelector('.carousel-prev');
+        const nextBtn = carousel.querySelector('.carousel-next');
+
+        if (!track || slides.length === 0) return;
+
+        let currentSlide = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
+        if (currentSlide < 0) currentSlide = 0;
+        let autoSlideInterval = null;
+        let resumeTimer = null;
+
+        // 归一化索引，保证首尾循环。
+        function normalizeIndex(index) {
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+            return index;
+        }
+
+        // 同步轨道位置、卡片状态和分页点。
+        function updateCarousel() {
+            track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        // 跳转到指定幻灯片
+        function goToSlide(index) {
+            currentSlide = normalizeIndex(index);
+            updateCarousel();
+        }
+
+        // 下一张幻灯片
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        // 上一张幻灯片
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        // 开始自动轮播
+        function startAutoSlide() {
+            stopAutoSlide();
+            if (slides.length <= 1) return;
+            autoSlideInterval = window.setInterval(nextSlide, 5000); // 每5秒切换一次
+        }
+
+        // 停止自动轮播
+        function stopAutoSlide() {
+            if (autoSlideInterval) {
+                window.clearInterval(autoSlideInterval);
+                autoSlideInterval = null;
+            }
+        }
+
+        // 用户手动操作后延迟恢复自动轮播。
+        function scheduleAutoSlide() {
+            if (resumeTimer) window.clearTimeout(resumeTimer);
+            resumeTimer = window.setTimeout(startAutoSlide, 10000);
+        }
+
+        // 事件监听器
+        if (prevBtn) prevBtn.addEventListener('click', () => {
+            stopAutoSlide();
+            prevSlide();
+            scheduleAutoSlide();
+        });
+
+        if (nextBtn) nextBtn.addEventListener('click', () => {
+            stopAutoSlide();
+            nextSlide();
+            scheduleAutoSlide();
+        });
+
+        // 点点击事件
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                stopAutoSlide();
+                goToSlide(index);
+                scheduleAutoSlide();
+            });
+        });
+
+        // 鼠标悬停暂停
+        carousel.addEventListener('mouseenter', stopAutoSlide);
+        carousel.addEventListener('mouseleave', scheduleAutoSlide);
+
+        // 触摸滑动支持
+        let startX = 0;
+        let isDragging = false;
+
+        track.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+            stopAutoSlide();
+        });
+
+        track.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            if (e.cancelable) e.preventDefault();
+        }, { passive: false });
+
+        track.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            
+            const endX = e.changedTouches[0].clientX;
+            const diffX = startX - endX;
+            
+            if (Math.abs(diffX) > 50) { // 滑动阈值
+                if (diffX > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+            
+            isDragging = false;
+            scheduleAutoSlide();
+        });
+
+        updateCarousel();
+        startAutoSlide();
+    }
+
+    // ========================================
+    // VIDEO CARD
+    // ========================================
+    let videoModal = null;
+
+    function ensureVideoModal() {
+        if (videoModal) return videoModal;
+        if (!document.body) return null;
+
+        videoModal = document.createElement('div');
+        videoModal.className = 'video-modal';
+        videoModal.hidden = true;
+        videoModal.innerHTML = [
+            '<div class="video-modal__backdrop" data-video-close></div>',
+            '<section class="video-modal__panel" aria-modal="true" role="dialog">',
+            '  <button class="video-modal__close" type="button" aria-label="关闭视频" data-video-close>&times;</button>',
+            '  <div class="video-modal__head">',
+            '    <h3 class="video-modal__title">Video</h3>',
+            '    <a class="video-modal__open" target="_blank" rel="noopener noreferrer">在 Bilibili 打开</a>',
+            '  </div>',
+            '  <div class="video-modal__frame-wrap">',
+            '    <iframe class="video-modal__frame" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen scrolling="no"></iframe>',
+            '  </div>',
+            '</section>'
+        ].join('');
+        document.body.appendChild(videoModal);
+
+        videoModal.addEventListener('click', event => {
+            if (event.target.closest('[data-video-close]')) closeVideoModal();
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && videoModal && !videoModal.hidden) closeVideoModal();
+        });
+
+        return videoModal;
+    }
+
+    function openVideoModal(bvid, title) {
+        const modal = ensureVideoModal();
+        const directUrl = 'https://www.bilibili.com/video/' + encodeURIComponent(bvid);
+        if (!modal) {
+            window.open(directUrl, '_blank', 'noopener');
+            return;
+        }
+
+        const frame = modal.querySelector('.video-modal__frame');
+        const titleEl = modal.querySelector('.video-modal__title');
+        const openLink = modal.querySelector('.video-modal__open');
+        const embedUrl = 'https://player.bilibili.com/player.html?isOutside=true&bvid=' + encodeURIComponent(bvid) + '&autoplay=1&danmaku=0&high_quality=1';
+
+        if (titleEl) titleEl.textContent = title || 'Video';
+        if (openLink) openLink.href = directUrl;
+        if (frame) frame.src = embedUrl;
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeVideoModal() {
+        if (!videoModal) return;
+        const frame = videoModal.querySelector('.video-modal__frame');
+        if (frame) frame.src = '';
+        videoModal.hidden = true;
+        document.body.style.overflow = '';
+    }
+
+    function initVideoCards() {
+        const cards = document.querySelectorAll('[data-video-bvid]');
+        if (!cards.length) return;
+
+        cards.forEach(card => {
+            if (card.dataset.videoReady === 'true') return;
+            const visual = card.querySelector('.proj-visual') || card;
+            const bvid = card.dataset.videoBvid;
+            const title = card.dataset.videoTitle || 'Video';
+            const coverUrl = card.dataset.videoCover;
+            if (!bvid || !visual) return;
+
+            card.dataset.videoReady = 'true';
+            visual.classList.add('video-card-visual');
+
+            const cover = document.createElement('button');
+            cover.className = 'video-card-cover';
+            cover.type = 'button';
+            cover.setAttribute('aria-label', title + ' 视频预览');
+            if (coverUrl) cover.style.backgroundImage = 'url("' + coverUrl + '")';
+            cover.innerHTML = '<span class="video-card-play" aria-hidden="true"></span>';
+            cover.addEventListener('click', event => {
+                event.preventDefault();
+                event.stopPropagation();
+                openVideoModal(bvid, title);
+            });
+
+            visual.appendChild(cover);
+        });
+    }
+
+    // ========================================
+    // INIT ALL AFTER LOADER (更新)
     // ========================================
     function initAfterLoad() {
         const typeEl = document.querySelector('.hero-type');
@@ -189,6 +423,8 @@
         initNav();
         initSkillBars();
         initGlitch();
+        initCarousel(); // 新增轮播初始化
+        initVideoCards();
 
         document.querySelectorAll('.hero-stats-grid [data-count]').forEach(c => animateCounter(c));
 

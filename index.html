@@ -136,65 +136,88 @@
                     <p class="sh-desc">技术驱动的创意项目，从 AI 架构到全栈工程</p>
                 </div>
 
-                <div class="proj-grid">
-                    <article class="proj-card proj-card--lg reveal">
-                        <div class="proj-visual">
-                            <div class="proj-bg grad-a"></div>
-                            <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M32 4L4 20v24l28 16 28-16V20L32 4z"/><path d="M32 36V20M32 36l-14-8M32 36l14-8"/><circle cx="32" cy="20" r="3"/></svg>
-                            <div class="proj-watermark">AI PM SKILLS</div>
-                        </div>
-                        <div class="proj-body">
-                            <div class="proj-tags">
-                                <span>AI 架构</span><span>多 Agent</span><span>开源</span>
+                <!-- 轮播容器 -->
+                <div class="carousel-container">
+                    <div class="carousel-track">
+                        <!-- 项目卡片1 - 静态视频卡片 -->
+                        <article
+                            class="carousel-slide proj-card proj-card--lg active collectionGallery__item"
+                            data-video-bvid="BV1jymLBsENj"
+                            data-video-title="AI PM Skills Demo"
+                            data-video-cover="https://i0.hdslb.com/bfs/archive/4afc0778c7b53b6a0cb067870ae4c434972c5e16.jpg">
+                            <div class="proj-visual">
+                                <div class="proj-bg grad-a"></div>
+                                <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M32 4L4 20v24l28 16 28-16V20L32 4z"/><path d="M32 36V20M32 36l-14-8M32 36l14-8"/><circle cx="32" cy="20" r="3"/></svg>
+                                <div class="proj-watermark">AI PM SKILLS</div>
                             </div>
-                            <h3 class="proj-name">AI PM Skills v3.1 Ironforge</h3>
-                            <p class="proj-desc">业界首创 Skill+Harness 双轨架构多 Agent 协作开发框架。10+ 专业 Skill 角色，支持全链路编排与独立运行模式。</p>
-                            <div class="proj-stack"><i>TypeScript</i><i>Node.js</i><i>YAML</i></div>
-                            <a href="https://github.com/mornikar/Harness_Multi-Agent_AI_PM" target="_blank" class="proj-link">VIEW PROJECT <span>→</span></a>
-                        </div>
-                    </article>
+                            <div class="proj-body">
+                                <div class="proj-tags">
+                                    <span>AI 架构</span><span>多 Agent</span><span>开源</span>
+                                </div>
+                                <h3 class="proj-name">AI PM Skills v3.1 Ironforge</h3>
+                                <p class="proj-desc">业界首创 Skill+Harness 双轨架构多 Agent 协作开发框架。10+ 专业 Skill 角色，支持全链路编排与独立运行模式。</p>
+                                <div class="proj-stack"><i>TypeScript</i><i>Node.js</i><i>YAML</i></div>
+                                <a href="https://github.com/mornikar/Harness_Multi-Agent_AI_PM" target="_blank" class="proj-link">VIEW PROJECT <span>→</span></a>
+                            </div>
+                        </article>
 
-                    <article class="proj-card reveal">
-                        <div class="proj-visual">
-                            <div class="proj-bg grad-b"></div>
-                            <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="8" width="48" height="48" rx="2"/><path d="M8 24h48M24 8v48"/><circle cx="24" cy="24" r="4"/></svg>
-                        </div>
-                        <div class="proj-body">
-                            <div class="proj-tags"><span>Wiki</span><span>Hexo</span><span>RAG</span></div>
-                            <h3 class="proj-name">Mornikar Wiki</h3>
-                            <p class="proj-desc">自生长知识库系统。LLM Wiki + Hexo 集成，支持 AI 对话、知识图谱、反向链接、多模型接入。</p>
-                            <div class="proj-stack"><i>Hexo</i><i>Vue</i><i>Dify</i></div>
-                            <a href="https://mornikar.github.io" target="_blank" class="proj-link">VIEW PROJECT <span>→</span></a>
-                        </div>
-                    </article>
+                        <!-- 项目卡片2 -->
+                        <article class="carousel-slide proj-card">
+                            <div class="proj-visual">
+                                <div class="proj-bg grad-b"></div>
+                                <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="8" y="8" width="48" height="48" rx="2"/><path d="M8 24h48M24 8v48"/><circle cx="24" cy="24" r="4"/></svg>
+                            </div>
+                            <div class="proj-body">
+                                <div class="proj-tags"><span>Wiki</span><span>Hexo</span><span>RAG</span></div>
+                                <h3 class="proj-name">Mornikar Wiki</h3>
+                                <p class="proj-desc">自生长知识库系统。LLM Wiki + Hexo 集成，支持 AI 对话、知识图谱、反向链接、多模型接入。</p>
+                                <div class="proj-stack"><i>Hexo</i><i>Vue</i><i>Dify</i></div>
+                                <a href="https://mornikar.github.io/Mornikar/" target="_blank" class="proj-link">VIEW PROJECT <span>→</span></a>
+                            </div>
+                        </article>
 
-                    <article class="proj-card reveal">
-                        <div class="proj-visual">
-                            <div class="proj-bg grad-c"></div>
-                            <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="10" y="10" width="44" height="30" rx="2"/><path d="M10 26h44M20 48h24M27 38v10M37 38v10"/></svg>
-                        </div>
-                        <div class="proj-body">
-                            <div class="proj-tags"><span>Electron</span><span>Vue 3</span><span>Desktop</span></div>
-                            <h3 class="proj-name">LobsterLauncher</h3>
-                            <p class="proj-desc">OpenClaw 桌面启动器。服务管理、Skills 黑名单、本地模型管理、内置终端，暗色科技 UI。</p>
-                            <div class="proj-stack"><i>Electron</i><i>Vue 3</i><i>node-pty</i></div>
-                            <a href="https://github.com/mornikar/OpenClaw_Launcher_LobsterLauncher" target="_blank" class="proj-link">VIEW PROJECT <span>→</span></a>
-                        </div>
-                    </article>
+                        <!-- 项目卡片3 -->
+                        <article class="carousel-slide proj-card">
+                            <div class="proj-visual">
+                                <div class="proj-bg grad-c"></div>
+                                <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="10" y="10" width="44" height="30" rx="2"/><path d="M10 26h44M20 48h24M27 38v10M37 38v10"/></svg>
+                            </div>
+                            <div class="proj-body">
+                                <div class="proj-tags"><span>Electron</span><span>Vue 3</span><span>Desktop</span></div>
+                                <h3 class="proj-name">LobsterLauncher</h3>
+                                <p class="proj-desc">OpenClaw 桌面启动器。服务管理、Skills 黑名单、本地模型管理、内置终端，暗色科技 UI。</p>
+                                <div class="proj-stack"><i>Electron</i><i>Vue 3</i><i>node-pty</i></div>
+                                <a href="https://github.com/mornikar/OpenClaw_Launcher_LobsterLauncher" target="_blank" class="proj-link">VIEW PROJECT <span>→</span></a>
+                            </div>
+                        </article>
 
-                    <article class="proj-card proj-card--wd reveal">
-                        <div class="proj-visual">
-                            <div class="proj-bg grad-d"></div>
-                            <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M16 48V16l16-8 16 8v32l-16 8-16-8z"/><path d="M32 8v48"/><path d="M16 16l16 8 16-8"/><path d="M16 32l16 8 16-8"/></svg>
+                        <!-- 项目卡片4 -->
+                        <article class="carousel-slide proj-card proj-card--wd">
+                            <div class="proj-visual">
+                                <div class="proj-bg grad-d"></div>
+                                <svg class="proj-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M16 48V16l16-8 16 8v32l-16 8-16-8z"/><path d="M32 8v48"/><path d="M16 16l16 8 16-8"/><path d="M16 32l16 8 16-8"/></svg>
+                            </div>
+                            <div class="proj-body">
+                                <div class="proj-tags"><span>Finance</span><span>Data</span><span>Plugin</span></div>
+                                <h3 class="proj-name">Finance Data Plugin</h3>
+                                <p class="proj-desc">金融数据检索插件，覆盖 A股/港股/美股、指数、基金、宏观等 209 个 API 接口。自然语言查询即答。</p>
+                                <div class="proj-stack"><i>Python</i><i>Tushare</i><i>API</i></div>
+                                <a href="#" class="proj-link">VIEW PROJECT <span>→</span></a>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- 轮播控制 -->
+                    <div class="carousel-controls">
+                        <button class="carousel-prev" type="button" aria-label="上一张项目卡片">‹</button>
+                        <div class="carousel-dots">
+                            <span class="dot active" data-slide="0"></span>
+                            <span class="dot" data-slide="1"></span>
+                            <span class="dot" data-slide="2"></span>
+                            <span class="dot" data-slide="3"></span>
                         </div>
-                        <div class="proj-body">
-                            <div class="proj-tags"><span>Finance</span><span>Data</span><span>Plugin</span></div>
-                            <h3 class="proj-name">Finance Data Plugin</h3>
-                            <p class="proj-desc">金融数据检索插件，覆盖 A股/港股/美股、指数、基金、宏观等 209 个 API 接口。自然语言查询即答。</p>
-                            <div class="proj-stack"><i>Python</i><i>Tushare</i><i>API</i></div>
-                            <a href="#" class="proj-link">VIEW PROJECT <span>→</span></a>
-                        </div>
-                    </article>
+                        <button class="carousel-next" type="button" aria-label="下一张项目卡片">›</button>
+                    </div>
                 </div>
             </section>
 
@@ -277,7 +300,7 @@
                             <div class="t-line"><span class="t-prompt">$</span><span class="t-cmd">contact --list</span></div>
                             <div class="t-block">
                                 <p>GitHub : <a href="https://github.com/mornikar" target="_blank">github.com/mornikar</a></p>
-                                <p>Blog   : <a href="https://mornikar.github.io" target="_blank">mornikar.github.io</a></p>
+                                <p>Blog   : <a href="https://mornikar.github.io/Mornikar/" target="_blank">mornikar.github.io/Mornikar</a></p>
                             </div>
                             <div class="t-line"><span class="t-prompt">$</span><span class="t-cur">_</span></div>
                         </div>
@@ -296,7 +319,7 @@
                 </div>
                 <div class="foot-mid">
                     <a href="https://github.com/mornikar" target="_blank">GitHub</a>
-                    <a href="https://mornikar.github.io" target="_blank">Blog</a>
+                    <a href="https://mornikar.github.io/Mornikar/" target="_blank">Blog</a>
                 </div>
                 <div class="foot-right">
                     <span>© 2026 — ALL SYSTEMS OPERATIONAL</span>
