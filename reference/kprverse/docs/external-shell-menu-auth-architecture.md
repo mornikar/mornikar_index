@@ -21,14 +21,22 @@
 - `mornikar-static-shell.js`
 - `mornikar-menu-links.js`
 
+静态 GitHub Pages 上的 `/protocol/` 只是内部兜底模板，不是给用户理解或浏览的内容页。当前首页点击 `MMO_CMS` / `MORNIKAR` 时，会在当前 KPR 页面中直接挂载外站 iframe，并把地址栏显示为实际目标路径：
+
+- `MMO_CMS` 显示为 `/Mornikar/admin/`
+- `MORNIKAR` 显示为 `/Mornikar/`
+
+如果用户直接打开旧入口 `/protocol/` 或 `/protocol/?shell=mornikar`，`mornikar-static-shell.js` 会挂载对应 iframe，并用 `history.replaceState()` 把地址栏改回上面的实际目标路径。
+
 ## 2. 当前外站路由映射
 
-先区分两个地址概念：
+先区分三个地址概念：
 
-- **外层入口地址**：菜单 `href` / 浏览器地址栏使用的地址。它必须先进入 KPR 外站 shell，才能保留原导航框架。
+- **内部 shell 模板地址**：`/protocol/`。它复用 KPR 原始框架，只作为静态部署的兜底模板，不是用户可见的业务页。
+- **显示地址**：浏览器地址栏最终显示的地址，例如 `/Mornikar/admin/` 或 `/Mornikar/`。
 - **iframe 目标地址**：外站 shell 内部 iframe 的 `src`。这是实际被嵌入到背景正文层的外站页面。
 
-不要把 iframe 目标地址直接写成菜单入口，否则会离开 KPR 外框，外站框架就会丢失。
+不要让用户停留在 `/protocol/` 的原始内容页；如果看到 protocol 内容，说明 shell 没有成功挂载或静态资源版本没有刷新。
 
 ```js
 const externalShellTargets = {
@@ -45,10 +53,10 @@ const externalShellTargets = {
 
 当前验收口径：
 
-| 菜单项 | 外层入口地址 | iframe 目标地址 | 说明 |
-| --- | --- | --- | --- |
-| `MMO_CMS` | `/protocol`，GitHub Pages 规范化后常见为 `/protocol/` | `https://mornikar.github.io/Mornikar/admin/` | 受 GitHub 授权保护；目标站是 admin，但菜单入口不能直接写 admin 地址。 |
-| `MORNIKAR` | `/protocol?shell=mornikar`，静态部署中建议写成 `/protocol/?shell=mornikar` | `https://mornikar.github.io/Mornikar/` | 复用稳定的 `/protocol` 外框模板，只通过 query 切换 iframe 目标。 |
+| 菜单项 | 内部 shell 模板 | 显示地址 | iframe 目标地址 | 说明 |
+| --- | --- | --- | --- | --- |
+| `MMO_CMS` | `/protocol/` | `/Mornikar/admin/` | `https://mornikar.github.io/Mornikar/admin/` | 受 GitHub 授权保护；点击后保留 KPR 框架，地址栏不应停在 `/protocol/`。 |
+| `MORNIKAR` | `/protocol/?shell=mornikar` | `/Mornikar/` | `https://mornikar.github.io/Mornikar/` | 复用稳定的 `/protocol` 外框模板，只通过 query 或点击逻辑切换 iframe 目标。 |
 
 这样做是因为 KPR/Nuxt 对 `/journal` 有原生页面逻辑，容易被 SPA 内部路由吃掉；而 `/protocol` 外框模板已经验证稳定。
 
@@ -67,6 +75,14 @@ const externalShellTargets = {
    - GitHub 登录脚本
    - profile/menu patch 脚本
 7. 浏览器加载后，`mornikar-external-shell-bg iframe` 成为正文背景层，KPR 导航框架浮在上面。
+
+静态首页点击流程：
+
+1. `index.html` 头部的 `installMornikarShellRouteGuard()` 捕获菜单点击。
+2. 对 `MMO_CMS` / `MORNIKAR`，脚本不会先跳转到 `/protocol/`，而是在当前页面调用 `mountExternalShell()`。
+3. `mountExternalShell()` 添加 `html.mornikar-external-shell`、创建 `.mornikar-external-shell-bg iframe`，并保留 `btn-burger`、`.the-menu`、`.left.flex-col.desktop-only` 等 KPR 外框元素。
+4. 通过 `history.pushState()` 把地址栏显示为 `/Mornikar/admin/` 或 `/Mornikar/`。
+5. 菜单里的 `Home` 会关闭 shell 并回到 `/`。
 
 ## 4. 如何添加一个外站菜单项
 
@@ -139,9 +155,10 @@ patchLabelByText('OLD_TEXT', 'NEW_PAGE', '/new-page', { matchNext: true });
 
 ## 6. MMO_CMS 授权验证
 
-`MMO_CMS` 是受 GitHub 授权保护的入口。这里同样要区分外层入口和 iframe 目标：
+`MMO_CMS` 是受 GitHub 授权保护的入口。这里同样要区分内部模板、显示地址和 iframe 目标：
 
-- 外层入口路由：`/protocol`，线上常见完整地址为 `https://mornikar.github.io/protocol/`
+- 内部 shell 模板：`/protocol/`
+- 用户可见显示地址：`https://mornikar.github.io/Mornikar/admin/`
 - iframe 目标地址：`https://mornikar.github.io/Mornikar/admin/`
 - 未授权点击 `/protocol` 时，`github-login.js` 会拦截，保存待跳转地址到 `sessionStorage.mornikar_auth_pending_redirect`，并打开 GitHub 登录弹窗。
 - 授权成功后，脚本读取 pending redirect，继续跳到 `/protocol`。
@@ -176,8 +193,8 @@ node server.js
 ## 8. 常见坑
 
 - 不要把 MORNIKAR 直接指回 `/journal`，Nuxt 会把它当原生 journal 页面处理，导致外站 shell 丢失。
-- 不要把 `MMO_CMS` 菜单入口直接写成 `https://mornikar.github.io/Mornikar/admin/`；这个地址只能作为 iframe 目标，否则会跳出 KPR 外框。
-- 不要把 `MORNIKAR` 菜单入口直接写成 `https://mornikar.github.io/Mornikar/`；这个地址只能作为 iframe 目标，否则会跳出 KPR 外框。
+- 不要把 `/protocol/` 当业务页面展示给用户；它只是内部 shell 模板和旧链接兜底。
+- 静态首页点击外站菜单时，应在当前页面直接 mount shell，然后通过 History API 显示 `/Mornikar/admin/` 或 `/Mornikar/`。
 - 不要同时加载服务端 shell 和静态 shell；`server.js` 会用 `stripMornikarStaticBoot()` 剥掉静态 boot 块。
 - 菜单文字 patch 必须幂等，避免 MutationObserver 反复写 DOM 导致闪烁。
 - `iframe.src` 比较要用 `getAttribute('src')`，直接比 `iframe.src` 可能因浏览器 URL 标准化而误判。
